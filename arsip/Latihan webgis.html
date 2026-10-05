@@ -1,0 +1,3532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+
+  <title>Semarang Coastal Dynamics & Subsidence Watch</title>
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <!-- Inter -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --cyan: #0891b2;
+
+      --bg: #f8fafc;
+      --surface: rgba(255,255,255,.94);
+      --surface-soft: rgba(248,250,252,.88);
+      --border: rgba(15,23,42,.10);
+
+      --text: #0f172a;
+      --muted: #64748b;
+
+      --danger: #dc2626;
+      --warning: #d97706;
+      --success: #059669;
+      --info: #0284c7;
+
+      --shadow:
+        0 12px 35px rgba(15,23,42,.12),
+        0 3px 10px rgba(15,23,42,.06);
+
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       MAP
+    ========================================================= */
+
+    #map {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .leaflet-container {
+      font-family: "Inter", sans-serif;
+      background: #dbeafe;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 9px;
+    }
+
+    .leaflet-control-scale {
+      margin-bottom: 18px !important;
+      margin-left: 18px !important;
+    }
+
+    /* =========================================================
+       COMMON GLASS PANEL
+    ========================================================= */
+
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,.65);
+      box-shadow: var(--shadow);
+    }
+
+    /* =========================================================
+       BRAND / TOP LEFT
+    ========================================================= */
+
+    .brand {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 1000;
+
+      width: min(390px, calc(100vw - 36px));
+
+      padding: 16px 18px;
+      border-radius: var(--radius);
+
+      pointer-events: auto;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+
+      display: grid;
+      place-items: center;
+
+      color: white;
+      background: linear-gradient(135deg, #0f766e, #0891b2);
+      border-radius: 12px;
+
+      box-shadow: 0 5px 15px rgba(8,145,178,.25);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.25;
+      font-weight: 800;
+      letter-spacing: -.3px;
+    }
+
+    .brand p {
+      margin: 7px 0 0 48px;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+
+    .status-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      padding: 5px 8px;
+      border-radius: 999px;
+
+      font-size: 9px;
+      font-weight: 700;
+
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* =========================================================
+       RIGHT CONTROL PANEL
+    ========================================================= */
+
+    .control-panel {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 1000;
+
+      width: 330px;
+      max-height: calc(100vh - 36px);
+
+      border-radius: var(--radius);
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 13px 15px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-header strong {
+      font-size: 12px;
+    }
+
+    .panel-header small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .icon-button {
+      width: 31px;
+      height: 31px;
+
+      display: grid;
+      place-items: center;
+
+      border: 0;
+      border-radius: 9px;
+
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    .icon-button:hover {
+      background: #e2e8f0;
+    }
+
+    .panel-body {
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .section {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+    }
+
+    .section-title {
+      margin-bottom: 8px;
+
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: #64748b;
+    }
+
+    /* =========================================================
+       SEARCH
+    ========================================================= */
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 37px;
+
+      padding: 0 11px 0 35px;
+
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+
+      background: #f8fafc;
+      outline: none;
+
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    .search-input:focus {
+      border-color: rgba(15,118,110,.45);
+      box-shadow: 0 0 0 3px rgba(15,118,110,.08);
+      background: white;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    #searchResults {
+      margin-top: 7px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .search-result {
+      padding: 8px 9px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 10px;
+    }
+
+    .search-result:hover {
+      background: #f1f5f9;
+    }
+
+    .search-result strong {
+      display: block;
+      font-size: 10px;
+    }
+
+    .search-result span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 8.5px;
+    }
+
+    /* =========================================================
+       BASEMAP
+    ========================================================= */
+
+    .basemap-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+    }
+
+    .base-btn {
+      min-height: 55px;
+
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+
+      background: #f8fafc;
+      color: #334155;
+
+      text-align: left;
+      padding: 8px;
+
+      transition: .15s ease;
+    }
+
+    .base-btn:hover {
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
+
+    .base-btn.active {
+      border-color: var(--primary);
+      background: rgba(15,118,110,.07);
+      color: var(--primary-dark);
+      box-shadow: inset 0 0 0 1px var(--primary);
+    }
+
+    .base-preview {
+      width: 100%;
+      height: 19px;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview-light {
+      background:
+        linear-gradient(45deg,#e2e8f0 25%,transparent 25%),
+        linear-gradient(-45deg,#e2e8f0 25%,transparent 25%),
+        #f8fafc;
+      background-size: 10px 10px;
+    }
+
+    .preview-street {
+      background:
+        linear-gradient(90deg,transparent 45%,#f59e0b 46%,#f59e0b 54%,transparent 55%),
+        #dbeafe;
+    }
+
+    .preview-satellite {
+      background:
+        radial-gradient(circle at 30% 30%,#64748b,transparent 25%),
+        radial-gradient(circle at 70% 65%,#166534,transparent 30%),
+        #334155;
+    }
+
+    .preview-topo {
+      background:
+        repeating-linear-gradient(
+          20deg,
+          #d9f99d,
+          #d9f99d 3px,
+          #bef264 4px,
+          #d9f99d 6px
+        );
+    }
+
+    .base-btn strong {
+      display: block;
+      font-size: 9px;
+    }
+
+    .base-btn span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 7.5px;
+    }
+
+    /* =========================================================
+       LAYERS
+    ========================================================= */
+
+    .layer-group {
+      margin-bottom: 10px;
+    }
+
+    .layer-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .layer-group-title {
+      margin-bottom: 5px;
+      font-size: 8px;
+      font-weight: 800;
+      color: #475569;
+    }
+
+    .layer-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      min-height: 28px;
+      padding: 4px 5px;
+
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .layer-item:hover {
+      background: #f8fafc;
+    }
+
+    .layer-item input {
+      accent-color: var(--primary);
+      margin: 0;
+    }
+
+    .layer-label {
+      flex: 1;
+      font-size: 9.5px;
+      color: #334155;
+    }
+
+    .layer-count {
+      min-width: 19px;
+      padding: 2px 5px;
+
+      border-radius: 999px;
+
+      background: #f1f5f9;
+      color: #64748b;
+
+      text-align: center;
+      font-size: 7px;
+      font-weight: 700;
+    }
+
+    /* =========================================================
+       ACTION BUTTONS
+    ========================================================= */
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 7px;
+    }
+
+    .action-btn {
+      min-height: 34px;
+
+      border: 1px solid #e2e8f0;
+      border-radius: 9px;
+
+      background: #fff;
+      color: #334155;
+
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .action-btn:hover {
+      background: #f8fafc;
+    }
+
+    .action-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* =========================================================
+       LEFT TOOLBAR
+    ========================================================= */
+
+    .map-tools {
+      position: fixed;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      z-index: 900;
+
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tool-btn {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+      place-items: center;
+
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 11px;
+
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(10px);
+
+      box-shadow: 0 5px 15px rgba(15,23,42,.12);
+
+      color: #334155;
+      font-size: 15px;
+    }
+
+    .tool-btn:hover {
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    /* =========================================================
+       LEGEND
+    ========================================================= */
+
+    .legend {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 900;
+
+      width: 285px;
+
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .legend-header {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legend-header strong {
+      font-size: 10px;
+    }
+
+    .legend-body {
+      padding: 10px 12px;
+      max-height: 190px;
+      overflow-y: auto;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-bottom: 7px;
+
+      font-size: 8.5px;
+      color: #475569;
+    }
+
+    .legend-symbol {
+      width: 20px;
+      height: 12px;
+      flex: 0 0 20px;
+
+      border-radius: 3px;
+    }
+
+    .legend-circle {
+      width: 11px;
+      height: 11px;
+      flex-basis: 11px;
+      border-radius: 50%;
+    }
+
+    /* =========================================================
+       BOTTOM STATUS
+    ========================================================= */
+
+    .status-bar {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 900;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      padding: 9px 12px;
+
+      border-radius: 11px;
+
+      font-size: 8px;
+      color: #475569;
+    }
+
+    .status-item strong {
+      color: #0f172a;
+    }
+
+    /* =========================================================
+       COLLAPSED PANEL STATES
+    ========================================================= */
+
+    .control-panel.collapsed {
+      width: auto;
+    }
+
+    .control-panel.collapsed .panel-body {
+      display: none;
+    }
+
+    .control-panel.collapsed .panel-header {
+      border-bottom: 0;
+    }
+
+    .legend.collapsed .legend-body {
+      display: none;
+    }
+
+    /* =========================================================
+       POPUP
+    ========================================================= */
+
+    .popup-title {
+      margin-bottom: 7px;
+      font-weight: 800;
+      font-size: 12px;
+      color: #0f172a;
+    }
+
+    .popup-subtitle {
+      margin-bottom: 9px;
+      color: #64748b;
+      font-size: 9px;
+    }
+
+    .popup-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9px;
+    }
+
+    .popup-table td {
+      padding: 4px 0;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+
+    .popup-table td:first-child {
+      width: 40%;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       LOADING
+    ========================================================= */
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+
+      display: grid;
+      place-items: center;
+
+      background: #f8fafc;
+      transition: opacity .4s ease;
+    }
+
+    #loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-box {
+      text-align: center;
+    }
+
+    .loader {
+      width: 38px;
+      height: 38px;
+
+      margin: auto;
+
+      border: 3px solid #dbeafe;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+
+      animation: spin .8s linear infinite;
+    }
+
+    .loader-box p {
+      margin-top: 10px;
+      color: #64748b;
+      font-size: 10px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================================================
+       TABLET / SMALL DESKTOP
+    ========================================================= */
+
+    @media (max-width: 1150px) {
+
+      .brand {
+        width: 330px;
+      }
+
+      .control-panel {
+        width: 300px;
+      }
+
+      .legend {
+        width: 250px;
+      }
+
+      .status-bar {
+        max-width: calc(100vw - 620px);
+      }
+    }
+
+    /* =========================================================
+       LAPTOP / SMALL DESKTOP
+    ========================================================= */
+
+    @media (max-width: 900px) {
+
+      .brand {
+        top: 12px;
+        left: 12px;
+        width: 300px;
+      }
+
+      .control-panel {
+        top: 12px;
+        right: 12px;
+        width: 285px;
+        max-height: calc(100vh - 24px);
+      }
+
+      .map-tools {
+        left: 12px;
+      }
+
+      .legend {
+        right: 12px;
+        bottom: 12px;
+      }
+
+      .status-bar {
+        left: 12px;
+        bottom: 12px;
+        max-width: calc(100vw - 560px);
+      }
+    }
+
+    /* =========================================================
+       TABLET
+    ========================================================= */
+
+    @media (max-width: 760px) {
+
+      .brand {
+        width: calc(100vw - 24px);
+        right: 12px;
+        max-width: none;
+      }
+
+      .brand p {
+        margin-left: 0;
+      }
+
+      .control-panel {
+        top: auto;
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+
+        width: auto;
+        max-height: 52vh;
+
+        border-radius: 17px;
+      }
+
+      .control-panel .panel-body {
+        max-height: calc(52vh - 55px);
+      }
+
+      .map-tools {
+        top: auto;
+        bottom: calc(52vh + 22px);
+        left: 10px;
+        transform: none;
+        flex-direction: row;
+      }
+
+      .legend {
+        top: 118px;
+        right: 10px;
+        bottom: auto;
+        width: 215px;
+      }
+
+      .status-bar {
+        left: 10px;
+        bottom: calc(52vh + 22px);
+        max-width: calc(100vw - 110px);
+
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 520px) {
+
+      body {
+        font-size: 12px;
+      }
+
+      .brand {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+
+        width: auto;
+        padding: 11px 12px;
+
+        border-radius: 13px;
+      }
+
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+      }
+
+      .brand h1 {
+        font-size: 12px;
+      }
+
+      .brand p {
+        margin-top: 5px;
+        font-size: 8px;
+      }
+
+      .status-row {
+        display: none;
+      }
+
+      .control-panel {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+
+        max-height: 58vh;
+      }
+
+      .control-panel .panel-body {
+        max-height: calc(58vh - 55px);
+      }
+
+      .panel-header {
+        padding: 10px 12px;
+      }
+
+      .section {
+        padding: 10px 11px;
+      }
+
+      .basemap-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .base-btn {
+        min-height: 51px;
+        padding: 6px;
+      }
+
+      .base-preview {
+        height: 15px;
+      }
+
+      .base-btn strong {
+        font-size: 7.5px;
+      }
+
+      .base-btn span {
+        display: none;
+      }
+
+      .layer-item {
+        min-height: 30px;
+      }
+
+      .legend {
+        top: 88px;
+        right: 8px;
+
+        width: 185px;
+        max-height: 150px;
+      }
+
+      .legend-body {
+        max-height: 110px;
+      }
+
+      .map-tools {
+        bottom: calc(58vh + 17px);
+        left: 8px;
+      }
+
+      .tool-btn {
+        width: 34px;
+        height: 34px;
+      }
+
+      .status-bar {
+        display: none;
+      }
+
+      .leaflet-control-scale {
+        margin-left: 8px !important;
+        margin-bottom: 8px !important;
+      }
+    }
+
+    /* =========================================================
+       VERY SMALL MOBILE
+    ========================================================= */
+
+    @media (max-width: 380px) {
+
+      .control-panel {
+        max-height: 61vh;
+      }
+
+      .control-panel .panel-body {
+        max-height: calc(61vh - 55px);
+      }
+
+      .map-tools {
+        bottom: calc(61vh + 15px);
+      }
+
+      .basemap-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .base-btn span {
+        display: block;
+      }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =======================================================
+       LOADING
+  ======================================================== -->
+
+  <div id="loading">
+    <div class="loader-box">
+      <div class="loader"></div>
+      <p>Memuat Semarang Coastal Dynamics...</p>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       MAP
+  ======================================================== -->
+
+  <div id="map"></div>
+
+  <!-- =======================================================
+       BRAND
+  ======================================================== -->
+
+  <div class="brand glass">
+
+    <div class="brand-title">
+
+      <div class="brand-icon">
+        🌊
+      </div>
+
+      <div>
+        <h1>Semarang Coastal Dynamics<br>& Subsidence Watch</h1>
+      </div>
+
+    </div>
+
+    <p>
+      WebGIS monitoring dinamika pesisir, rob, penurunan muka tanah,
+      hidrologi, penggunaan lahan, dan infrastruktur pengendalian banjir.
+    </p>
+
+    <div class="status-row">
+
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        System Ready
+      </div>
+
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        Semarang
+      </div>
+
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        Multi-Basemap
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       LEFT MAP TOOLS
+  ======================================================== -->
+
+  <div class="map-tools">
+
+    <button
+      class="tool-btn"
+      id="locateBtn"
+      title="Lokasi saya"
+      aria-label="Lokasi saya"
+    >
+      ◎
+    </button>
+
+    <button
+      class="tool-btn"
+      id="resetBtn"
+      title="Kembali ke Semarang"
+      aria-label="Kembali ke Semarang"
+    >
+      ⌂
+    </button>
+
+    <button
+      class="tool-btn"
+      id="measureBtn"
+      title="Ukur jarak"
+      aria-label="Ukur jarak"
+    >
+      ↔
+    </button>
+
+  </div>
+
+  <!-- =======================================================
+       RIGHT CONTROL PANEL
+  ======================================================== -->
+
+  <aside class="control-panel glass" id="controlPanel">
+
+    <div class="panel-header">
+
+      <div>
+        <strong>Map Controls</strong>
+        <small>Layer & visualisasi</small>
+      </div>
+
+      <button
+        class="icon-button"
+        id="panelToggle"
+        aria-label="Collapse panel"
+      >
+        −
+      </button>
+
+    </div>
+
+    <div class="panel-body">
+
+      <!-- SEARCH -->
+
+      <section class="section">
+
+        <div class="section-title">
+          Search
+        </div>
+
+        <div class="search-wrap">
+
+          <span class="search-icon">⌕</span>
+
+          <input
+            id="searchInput"
+            class="search-input"
+            type="search"
+            placeholder="Cari lokasi, stasiun, sungai..."
+            autocomplete="off"
+          />
+
+        </div>
+
+        <div id="searchResults"></div>
+
+      </section>
+
+      <!-- BASEMAP -->
+
+      <section class="section">
+
+        <div class="section-title">
+          Basemap
+        </div>
+
+        <div class="basemap-grid">
+
+          <button
+            class="base-btn active"
+            data-base="light"
+          >
+            <div class="base-preview preview-light"></div>
+            <strong>Light Gray</strong>
+            <span>Clean analysis</span>
+          </button>
+
+          <button
+            class="base-btn"
+            data-base="streets"
+          >
+            <div class="base-preview preview-street"></div>
+            <strong>Streets</strong>
+            <span>Road context</span>
+          </button>
+
+          <button
+            class="base-btn"
+            data-base="satellite"
+          >
+            <div class="base-preview preview-satellite"></div>
+            <strong>Satellite</strong>
+            <span>Imagery</span>
+          </button>
+
+          <button
+            class="base-btn"
+            data-base="topo"
+          >
+            <div class="base-preview preview-topo"></div>
+            <strong>Topographic</strong>
+            <span>Terrain</span>
+          </button>
+
+        </div>
+
+      </section>
+
+      <!-- LAYERS -->
+
+      <section class="section">
+
+        <div class="section-title">
+          Thematic Layers
+        </div>
+
+        <!-- ADMIN -->
+
+        <div class="layer-group">
+
+          <div class="layer-group-title">
+            ADMINISTRASI
+          </div>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="admin"
+              checked
+            />
+
+            <span class="layer-label">
+              Batas Administrasi
+            </span>
+
+            <span class="layer-count">
+              1
+            </span>
+
+          </label>
+
+        </div>
+
+        <!-- COASTAL -->
+
+        <div class="layer-group">
+
+          <div class="layer-group-title">
+            COASTAL DYNAMICS
+          </div>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="coastline"
+              checked
+            />
+
+            <span class="layer-label">
+              Garis Pantai
+            </span>
+
+            <span class="layer-count">
+              1
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="subsidence"
+              checked
+            />
+
+            <span class="layer-label">
+              Zona Penurunan Muka Tanah
+            </span>
+
+            <span class="layer-count">
+              3
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="rob"
+              checked
+            />
+
+            <span class="layer-label">
+              Kerawanan Rob
+            </span>
+
+            <span class="layer-count">
+              3
+            </span>
+
+          </label>
+
+        </div>
+
+        <!-- HYDRO -->
+
+        <div class="layer-group">
+
+          <div class="layer-group-title">
+            HIDROLOGI & PENGENDALIAN
+          </div>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="rivers"
+              checked
+            />
+
+            <span class="layer-label">
+              Sungai
+            </span>
+
+            <span class="layer-count">
+              4
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="drainage"
+              checked
+            />
+
+            <span class="layer-label">
+              Saluran Drainase
+            </span>
+
+            <span class="layer-count">
+              3
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="floodControl"
+              checked
+            />
+
+            <span class="layer-label">
+              Infrastruktur Pengendalian Rob
+            </span>
+
+            <span class="layer-count">
+              5
+            </span>
+
+          </label>
+
+        </div>
+
+        <!-- MONITORING -->
+
+        <div class="layer-group">
+
+          <div class="layer-group-title">
+            MONITORING
+          </div>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="monitoring"
+              checked
+            />
+
+            <span class="layer-label">
+              Stasiun Monitoring
+            </span>
+
+            <span class="layer-count">
+              5
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="tide"
+              checked
+            />
+
+            <span class="layer-label">
+              Tide Gauge
+            </span>
+
+            <span class="layer-count">
+              3
+            </span>
+
+          </label>
+
+        </div>
+
+        <!-- LAND USE -->
+
+        <div class="layer-group">
+
+          <div class="layer-group-title">
+            PENGGUNAAN LAHAN
+          </div>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="settlement"
+              checked
+            />
+
+            <span class="layer-label">
+              Permukiman Pesisir
+            </span>
+
+            <span class="layer-count">
+              3
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="industry"
+              checked
+            />
+
+            <span class="layer-label">
+              Kawasan Industri
+            </span>
+
+            <span class="layer-count">
+              3
+            </span>
+
+          </label>
+
+          <label class="layer-item">
+
+            <input
+              type="checkbox"
+              data-layer="greenCoast"
+              checked
+            />
+
+            <span class="layer-label">
+              Green Coastal Area
+            </span>
+
+            <span class="layer-count">
+              2
+            </span>
+
+          </label>
+
+        </div>
+
+      </section>
+
+      <!-- EXPORT -->
+
+      <section class="section">
+
+        <div class="section-title">
+          Data
+        </div>
+
+        <div class="action-grid">
+
+          <button
+            class="action-btn primary"
+            id="exportGeoJSON"
+          >
+            Export GeoJSON
+          </button>
+
+          <button
+            class="action-btn"
+            id="exportCSV"
+          >
+            Export CSV
+          </button>
+
+          <button
+            class="action-btn"
+            id="showAll"
+          >
+            Semua Layer
+          </button>
+
+          <button
+            class="action-btn"
+            id="hideAll"
+          >
+            Sembunyikan
+          </button>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </aside>
+
+  <!-- =======================================================
+       LEGEND
+  ======================================================== -->
+
+  <div class="legend glass" id="legend">
+
+    <div class="legend-header">
+
+      <strong>Legend</strong>
+
+      <button
+        class="icon-button"
+        id="legendToggle"
+        aria-label="Collapse legend"
+      >
+        −
+      </button>
+
+    </div>
+
+    <div class="legend-body">
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol"
+          style="background:#dc2626; opacity:.45;"
+        ></span>
+
+        Zona subsidence tinggi
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol"
+          style="background:#f59e0b; opacity:.5;"
+        ></span>
+
+        Zona subsidence sedang
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol"
+          style="background:#fbbf24; opacity:.5;"
+        ></span>
+
+        Zona subsidence rendah
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol"
+          style="height:3px;background:#0891b2;"
+        ></span>
+
+        Garis pantai
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol"
+          style="height:3px;background:#2563eb;"
+        ></span>
+
+        Sungai
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol"
+          style="height:2px;background:#64748b;"
+        ></span>
+
+        Drainase
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol legend-circle"
+          style="background:#7c3aed;"
+        ></span>
+
+        Stasiun monitoring
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol legend-circle"
+          style="background:#0891b2;"
+        ></span>
+
+        Tide gauge
+
+      </div>
+
+      <div class="legend-item">
+
+        <span
+          class="legend-symbol legend-circle"
+          style="background:#059669;"
+        ></span>
+
+        Infrastruktur pengendalian
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       STATUS BAR
+  ======================================================== -->
+
+  <div class="status-bar glass">
+
+    <div class="status-item">
+      Lat:
+      <strong id="latValue">-</strong>
+    </div>
+
+    <div class="status-item">
+      Lng:
+      <strong id="lngValue">-</strong>
+    </div>
+
+    <div class="status-item">
+      Zoom:
+      <strong id="zoomValue">-</strong>
+    </div>
+
+    <div class="status-item">
+      Visible:
+      <strong id="visibleLayers">0</strong>
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       LEAFLET
+  ======================================================== -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+
+    /* =======================================================
+       MAP INITIALIZATION
+    ======================================================== */
+
+    const SEMARANG_CENTER = [-6.965, 110.420];
+
+    const map = L.map("map", {
+      center: SEMARANG_CENTER,
+      zoom: 12,
+      minZoom: 9,
+      maxZoom: 19,
+      preferCanvas: true,
+      zoomControl: false,
+      attributionControl: true
+    });
+
+    L.control.zoom({
+      position: "bottomright"
+    }).addTo(map);
+
+    L.control.scale({
+      imperial: false,
+      metric: true
+    }).addTo(map);
+
+    /* =======================================================
+       MAP PANES
+    ======================================================== */
+
+    map.createPane("polygonPane");
+    map.getPane("polygonPane").style.zIndex = 400;
+
+    map.createPane("linePane");
+    map.getPane("linePane").style.zIndex = 450;
+
+    map.createPane("pointPane");
+    map.getPane("pointPane").style.zIndex = 500;
+
+    map.createPane("adminPane");
+    map.getPane("adminPane").style.zIndex = 420;
+
+    /* =======================================================
+       BASEMAPS
+       Esri-based so the application does not depend on
+       OSM tiles as the default.
+    ======================================================== */
+
+    const baseMaps = {
+
+      light: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution:
+            "Tiles © Esri — Esri, DeLorme, NAVTEQ"
+        }
+      ),
+
+      streets: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution:
+            "Tiles © Esri — Esri, DeLorme, NAVTEQ"
+        }
+      ),
+
+      satellite: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution:
+            "Tiles © Esri, Maxar, Earthstar Geographics"
+        }
+      ),
+
+      topo: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution:
+            "Tiles © Esri — Esri, DeLorme, NAVTEQ"
+        }
+      )
+
+    };
+
+    /* Default = Light Gray */
+
+    baseMaps.light.addTo(map);
+
+    let currentBasemap = "light";
+
+    document
+      .querySelectorAll(".base-btn")
+      .forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          const target = btn.dataset.base;
+
+          if (!baseMaps[target]) return;
+
+          if (currentBasemap === target) return;
+
+          map.removeLayer(baseMaps[currentBasemap]);
+
+          baseMaps[target].addTo(map);
+
+          currentBasemap = target;
+
+          document
+            .querySelectorAll(".base-btn")
+            .forEach(b => b.classList.remove("active"));
+
+          btn.classList.add("active");
+
+        });
+
+      });
+
+    /* =======================================================
+       HELPER
+    ======================================================== */
+
+    function feature(
+      type,
+      properties,
+      coordinates
+    ) {
+
+      return {
+        type: "Feature",
+        properties,
+        geometry: {
+          type,
+          coordinates
+        }
+      };
+
+    }
+
+    function collection(features) {
+
+      return {
+        type: "FeatureCollection",
+        features
+      };
+
+    }
+
+    /* =======================================================
+       ADMINISTRATIVE AREA
+    ======================================================== */
+
+    const adminData = collection([
+
+      feature(
+        "Polygon",
+        {
+          name: "Kawasan Pesisir Kota Semarang",
+          type: "Wilayah Studi"
+        },
+        [[
+          [110.32,-6.90],
+          [110.49,-6.90],
+          [110.49,-7.10],
+          [110.32,-7.10],
+          [110.32,-6.90]
+        ]]
+      )
+
+    ]);
+
+    /* =======================================================
+       COASTLINE
+    ======================================================== */
+
+    const coastlineData = collection([
+
+      feature(
+        "LineString",
+        {
+          name: "Pantai Utara Semarang",
+          type: "Garis Pantai"
+        },
+        [
+          [110.32,-6.925],
+          [110.35,-6.918],
+          [110.38,-6.925],
+          [110.41,-6.920],
+          [110.44,-6.927],
+          [110.47,-6.918],
+          [110.50,-6.925]
+        ]
+      )
+
+    ]);
+
+    /* =======================================================
+       SUBSIDENCE ZONES
+    ======================================================== */
+
+    const subsidenceData = collection([
+
+      feature(
+        "Polygon",
+        {
+          name: "Subsidence Tinggi — Genuk",
+          severity: "Tinggi",
+          rate: "8–12 cm/tahun"
+        },
+        [[
+          [110.43,-6.92],
+          [110.49,-6.92],
+          [110.49,-6.98],
+          [110.43,-6.98],
+          [110.43,-6.92]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Subsidence Sedang — Semarang Timur",
+          severity: "Sedang",
+          rate: "5–8 cm/tahun"
+        },
+        [[
+          [110.39,-6.93],
+          [110.43,-6.93],
+          [110.43,-6.99],
+          [110.39,-6.99],
+          [110.39,-6.93]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Subsidence Rendah — Semarang Barat",
+          severity: "Rendah",
+          rate: "2–5 cm/tahun"
+        },
+        [[
+          [110.33,-6.93],
+          [110.39,-6.93],
+          [110.39,-6.98],
+          [110.33,-6.98],
+          [110.33,-6.93]
+        ]]
+      )
+
+    ]);
+
+    /* =======================================================
+       ROB
+    ======================================================== */
+
+    const robData = collection([
+
+      feature(
+        "Polygon",
+        {
+          name: "Zona Rob Genuk",
+          level: "Sangat Tinggi",
+          depth: "40–80 cm"
+        },
+        [[
+          [110.445,-6.925],
+          [110.485,-6.925],
+          [110.485,-6.955],
+          [110.445,-6.955],
+          [110.445,-6.925]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Zona Rob Kaligawe",
+          level: "Tinggi",
+          depth: "25–50 cm"
+        },
+        [[
+          [110.415,-6.925],
+          [110.445,-6.925],
+          [110.445,-6.96],
+          [110.415,-6.96],
+          [110.415,-6.925]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Zona Rob Semarang Barat",
+          level: "Sedang",
+          depth: "15–30 cm"
+        },
+        [[
+          [110.335,-6.925],
+          [110.375,-6.925],
+          [110.375,-6.955],
+          [110.335,-6.955],
+          [110.335,-6.925]
+        ]]
+      )
+
+    ]);
+
+    /* =======================================================
+       RIVERS
+    ======================================================== */
+
+    const riversData = collection([
+
+      feature(
+        "LineString",
+        {
+          name: "Kali Beringin",
+          type: "Sungai utama"
+        },
+        [
+          [110.345,-6.87],
+          [110.355,-6.89],
+          [110.36,-6.91],
+          [110.355,-6.94]
+        ]
+      ),
+
+      feature(
+        "LineString",
+        {
+          name: "Banjir Kanal Barat",
+          type: "Sungai / kanal"
+        },
+        [
+          [110.385,-6.86],
+          [110.385,-6.89],
+          [110.39,-6.92],
+          [110.39,-6.95]
+        ]
+      ),
+
+      feature(
+        "LineString",
+        {
+          name: "Kali Tenggang",
+          type: "Sungai"
+        },
+        [
+          [110.425,-6.86],
+          [110.43,-6.89],
+          [110.44,-6.92],
+          [110.455,-6.945]
+        ]
+      ),
+
+      feature(
+        "LineString",
+        {
+          name: "Kali Babon",
+          type: "Sungai"
+        },
+        [
+          [110.48,-6.87],
+          [110.475,-6.89],
+          [110.47,-6.91],
+          [110.465,-6.93]
+        ]
+      )
+
+    ]);
+
+    /* =======================================================
+       DRAINAGE
+    ======================================================== */
+
+    const drainageData = collection([
+
+      feature(
+        "LineString",
+        {
+          name: "Saluran Drainase Genuk 01",
+          type: "Drainase"
+        },
+        [
+          [110.45,-6.90],
+          [110.46,-6.92],
+          [110.47,-6.945]
+        ]
+      ),
+
+      feature(
+        "LineString",
+        {
+          name: "Saluran Drainase Kaligawe",
+          type: "Drainase"
+        },
+        [
+          [110.405,-6.90],
+          [110.42,-6.92],
+          [110.44,-6.945]
+        ]
+      ),
+
+      feature(
+        "LineString",
+        {
+          name: "Saluran Drainase Barat",
+          type: "Drainase"
+        },
+        [
+          [110.35,-6.90],
+          [110.36,-6.92],
+          [110.365,-6.945]
+        ]
+      )
+
+    ]);
+
+    /* =======================================================
+       FLOOD CONTROL INFRASTRUCTURE
+    ======================================================== */
+
+    const floodControlData = collection([
+
+      feature(
+        "Point",
+        {
+          name: "Polder Banger",
+          type: "Polder",
+          status: "Operational"
+        },
+        [110.435,-6.945]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Pompa Genuk",
+          type: "Pompa",
+          status: "Operational"
+        },
+        [110.462,-6.945]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Kolam Retensi Kaligawe",
+          type: "Kolam Retensi",
+          status: "Operational"
+        },
+        [110.422,-6.948]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Tanggul Pantai Timur",
+          type: "Tanggul",
+          status: "Operational"
+        },
+        [110.472,-6.928]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Pompa Semarang Barat",
+          type: "Pompa",
+          status: "Operational"
+        },
+        [110.35,-6.942]
+      )
+
+    ]);
+
+    /* =======================================================
+       MONITORING
+    ======================================================== */
+
+    const monitoringData = collection([
+
+      feature(
+        "Point",
+        {
+          name: "GNSS Station Genuk",
+          type: "GNSS",
+          status: "Active",
+          observation: "Continuous"
+        },
+        [110.465,-6.945]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "GNSS Station Kaligawe",
+          type: "GNSS",
+          status: "Active",
+          observation: "Continuous"
+        },
+        [110.425,-6.94]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "InSAR Monitoring West",
+          type: "InSAR",
+          status: "Active",
+          observation: "Satellite"
+        },
+        [110.355,-6.94]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Settlement Monitoring Center",
+          type: "Monitoring",
+          status: "Active",
+          observation: "Periodic"
+        },
+        [110.445,-6.96]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Coastal Observation Station",
+          type: "Monitoring",
+          status: "Active",
+          observation: "Periodic"
+        },
+        [110.48,-6.93]
+      )
+
+    ]);
+
+    /* =======================================================
+       TIDE GAUGE
+    ======================================================== */
+
+    const tideData = collection([
+
+      feature(
+        "Point",
+        {
+          name: "Tide Gauge Tanjung Emas",
+          type: "Tide Gauge",
+          status: "Active"
+        },
+        [110.415,-6.94]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Tide Gauge Genuk",
+          type: "Tide Gauge",
+          status: "Active"
+        },
+        [110.47,-6.93]
+      ),
+
+      feature(
+        "Point",
+        {
+          name: "Tide Gauge Barat",
+          type: "Tide Gauge",
+          status: "Active"
+        },
+        [110.355,-6.93]
+      )
+
+    ]);
+
+    /* =======================================================
+       SETTLEMENT
+    ======================================================== */
+
+    const settlementData = collection([
+
+      feature(
+        "Polygon",
+        {
+          name: "Permukiman Genuk",
+          type: "Permukiman Pesisir"
+        },
+        [[
+          [110.445,-6.955],
+          [110.485,-6.955],
+          [110.485,-6.985],
+          [110.445,-6.985],
+          [110.445,-6.955]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Permukiman Kaligawe",
+          type: "Permukiman Pesisir"
+        },
+        [[
+          [110.405,-6.95],
+          [110.44,-6.95],
+          [110.44,-6.98],
+          [110.405,-6.98],
+          [110.405,-6.95]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Permukiman Semarang Barat",
+          type: "Permukiman Pesisir"
+        },
+        [[
+          [110.335,-6.95],
+          [110.375,-6.95],
+          [110.375,-6.98],
+          [110.335,-6.98],
+          [110.335,-6.95]
+        ]]
+      )
+
+    ]);
+
+    /* =======================================================
+       INDUSTRY
+    ======================================================== */
+
+    const industryData = collection([
+
+      feature(
+        "Polygon",
+        {
+          name: "Kawasan Industri Terboyo",
+          type: "Kawasan Industri"
+        },
+        [[
+          [110.445,-6.90],
+          [110.49,-6.90],
+          [110.49,-6.93],
+          [110.445,-6.93],
+          [110.445,-6.90]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Kawasan Industri Genuk",
+          type: "Kawasan Industri"
+        },
+        [[
+          [110.42,-6.90],
+          [110.45,-6.90],
+          [110.45,-6.93],
+          [110.42,-6.93],
+          [110.42,-6.90]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Kawasan Industri Tanjung Emas",
+          type: "Kawasan Industri"
+        },
+        [[
+          [110.395,-6.925],
+          [110.425,-6.925],
+          [110.425,-6.95],
+          [110.395,-6.95],
+          [110.395,-6.925]
+        ]]
+      )
+
+    ]);
+
+    /* =======================================================
+       GREEN COAST
+    ======================================================== */
+
+    const greenCoastData = collection([
+
+      feature(
+        "Polygon",
+        {
+          name: "Mangrove Tapak",
+          type: "Green Coastal Area"
+        },
+        [[
+          [110.32,-6.92],
+          [110.345,-6.92],
+          [110.345,-6.945],
+          [110.32,-6.945],
+          [110.32,-6.92]
+        ]]
+      ),
+
+      feature(
+        "Polygon",
+        {
+          name: "Green Belt Genuk",
+          type: "Green Coastal Area"
+        },
+        [[
+          [110.475,-6.92],
+          [110.50,-6.92],
+          [110.50,-6.945],
+          [110.475,-6.945],
+          [110.475,-6.92]
+        ]]
+      )
+
+    ]);
+
+    /* =======================================================
+       POPUP
+    ======================================================== */
+
+    function createPopup(properties) {
+
+      const entries = Object.entries(properties || {});
+
+      const title =
+        properties?.name ||
+        "Informasi Spasial";
+
+      const rows = entries
+        .filter(([key]) => key !== "name")
+        .map(([key, value]) => {
+
+          const label = key
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, c => c.toUpperCase());
+
+          return `
+            <tr>
+              <td>${label}</td>
+              <td>${value}</td>
+            </tr>
+          `;
+
+        })
+        .join("");
+
+      return `
+        <div class="popup-title">${title}</div>
+
+        <div class="popup-subtitle">
+          Semarang Coastal Dynamics
+        </div>
+
+        <table class="popup-table">
+          ${rows}
+        </table>
+      `;
+
+    }
+
+    /* =======================================================
+       STYLE FUNCTIONS
+    ======================================================== */
+
+    function pointStyle(color) {
+
+      return L.circleMarker([0,0], {
+        radius: 7,
+        fillColor: color,
+        color: "#ffffff",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: .9,
+        pane: "pointPane"
+      });
+
+    }
+
+    function geoStyle(type) {
+
+      if (type === "subsidence") {
+
+        return function(feature) {
+
+          const severity = feature.properties?.severity;
+
+          let fill = "#fbbf24";
+
+          if (severity === "Tinggi") fill = "#dc2626";
+          if (severity === "Sedang") fill = "#f59e0b";
+
+          return {
+            color: fill,
+            fillColor: fill,
+            weight: 1.5,
+            fillOpacity: .28,
+            pane: "polygonPane"
+          };
+
+        };
+
+      }
+
+      if (type === "rob") {
+
+        return function(feature) {
+
+          const level = feature.properties?.level;
+
+          let fill = "#fde68a";
+
+          if (level === "Sangat Tinggi") fill = "#dc2626";
+          if (level === "Tinggi") fill = "#f97316";
+
+          return {
+            color: fill,
+            fillColor: fill,
+            weight: 1,
+            fillOpacity: .22,
+            pane: "polygonPane"
+          };
+
+        };
+
+      }
+
+      if (type === "admin") {
+
+        return {
+          color: "#334155",
+          weight: 1.5,
+          dashArray: "6 5",
+          fill: false,
+          pane: "adminPane"
+        };
+
+      }
+
+      if (type === "coastline") {
+
+        return {
+          color: "#0891b2",
+          weight: 4,
+          opacity: .95,
+          pane: "linePane"
+        };
+
+      }
+
+      if (type === "rivers") {
+
+        return {
+          color: "#2563eb",
+          weight: 3,
+          opacity: .85,
+          pane: "linePane"
+        };
+
+      }
+
+      if (type === "drainage") {
+
+        return {
+          color: "#64748b",
+          weight: 1.7,
+          opacity: .8,
+          dashArray: "5 5",
+          pane: "linePane"
+        };
+
+      }
+
+      if (type === "settlement") {
+
+        return {
+          color: "#64748b",
+          fillColor: "#94a3b8",
+          weight: 1,
+          fillOpacity: .16,
+          pane: "polygonPane"
+        };
+
+      }
+
+      if (type === "industry") {
+
+        return {
+          color: "#7c2d12",
+          fillColor: "#ea580c",
+          weight: 1,
+          fillOpacity: .25,
+          pane: "polygonPane"
+        };
+
+      }
+
+      if (type === "greenCoast") {
+
+        return {
+          color: "#15803d",
+          fillColor: "#22c55e",
+          weight: 1,
+          fillOpacity: .28,
+          pane: "polygonPane"
+        };
+
+      }
+
+      return {};
+    }
+
+    /* =======================================================
+       LAYER FACTORY
+    ======================================================== */
+
+    function createGeoLayer(
+      data,
+      type,
+      options = {}
+    ) {
+
+      return L.geoJSON(data, {
+
+        renderer: L.canvas(),
+
+        style: geoStyle(type),
+
+        pointToLayer: function(feature, latlng) {
+
+          let color = "#7c3aed";
+
+          if (type === "tide") {
+            color = "#0891b2";
+          }
+
+          if (type === "floodControl") {
+            color = "#059669";
+          }
+
+          return L.circleMarker(latlng, {
+
+            radius: options.radius || 7,
+
+            fillColor: color,
+            color: "#ffffff",
+
+            weight: 2,
+
+            fillOpacity: .92,
+            opacity: 1,
+
+            pane: "pointPane"
+
+          });
+
+        },
+
+        onEachFeature: function(
+          feature,
+          layer
+        ) {
+
+          layer.bindPopup(
+            createPopup(feature.properties),
+            {
+              maxWidth: 320,
+              className: "modern-popup"
+            }
+          );
+
+        }
+
+      });
+
+    }
+
+    /* =======================================================
+       LAYER REGISTRY
+    ======================================================== */
+
+    const layers = {
+
+      admin:
+        createGeoLayer(
+          adminData,
+          "admin"
+        ),
+
+      coastline:
+        createGeoLayer(
+          coastlineData,
+          "coastline"
+        ),
+
+      subsidence:
+        createGeoLayer(
+          subsidenceData,
+          "subsidence"
+        ),
+
+      rob:
+        createGeoLayer(
+          robData,
+          "rob"
+        ),
+
+      rivers:
+        createGeoLayer(
+          riversData,
+          "rivers"
+        ),
+
+      drainage:
+        createGeoLayer(
+          drainageData,
+          "drainage"
+        ),
+
+      floodControl:
+        createGeoLayer(
+          floodControlData,
+          "floodControl"
+        ),
+
+      monitoring:
+        createGeoLayer(
+          monitoringData,
+          "monitoring"
+        ),
+
+      tide:
+        createGeoLayer(
+          tideData,
+          "tide"
+        ),
+
+      settlement:
+        createGeoLayer(
+          settlementData,
+          "settlement"
+        ),
+
+      industry:
+        createGeoLayer(
+          industryData,
+          "industry"
+        ),
+
+      greenCoast:
+        createGeoLayer(
+          greenCoastData,
+          "greenCoast"
+        )
+
+    };
+
+    /* =======================================================
+       ADD DEFAULT LAYERS
+    ======================================================== */
+
+    Object.values(layers)
+      .forEach(layer => layer.addTo(map));
+
+    /* =======================================================
+       LAYER TOGGLE
+    ======================================================== */
+
+    document
+      .querySelectorAll("[data-layer]")
+      .forEach(input => {
+
+        input.addEventListener(
+          "change",
+          function() {
+
+            const key = this.dataset.layer;
+
+            if (!layers[key]) return;
+
+            if (this.checked) {
+
+              layers[key].addTo(map);
+
+            } else {
+
+              map.removeLayer(layers[key]);
+
+            }
+
+            updateVisibleCount();
+
+          }
+        );
+
+      });
+
+    function updateVisibleCount() {
+
+      let count = 0;
+
+      Object.values(layers)
+        .forEach(layer => {
+
+          if (map.hasLayer(layer)) {
+            count++;
+          }
+
+        });
+
+      document.getElementById(
+        "visibleLayers"
+      ).textContent = count;
+
+    }
+
+    updateVisibleCount();
+
+    /* =======================================================
+       SHOW / HIDE ALL
+    ======================================================== */
+
+    document
+      .getElementById("showAll")
+      .addEventListener("click", () => {
+
+        Object.entries(layers)
+          .forEach(([key, layer]) => {
+
+            layer.addTo(map);
+
+            const input =
+              document.querySelector(
+                `[data-layer="${key}"]`
+              );
+
+            if (input) input.checked = true;
+
+          });
+
+        updateVisibleCount();
+
+      });
+
+    document
+      .getElementById("hideAll")
+      .addEventListener("click", () => {
+
+        Object.entries(layers)
+          .forEach(([key, layer]) => {
+
+            map.removeLayer(layer);
+
+            const input =
+              document.querySelector(
+                `[data-layer="${key}"]`
+              );
+
+            if (input) input.checked = false;
+
+          });
+
+        updateVisibleCount();
+
+      });
+
+    /* =======================================================
+       PANEL COLLAPSE
+    ======================================================== */
+
+    const controlPanel =
+      document.getElementById("controlPanel");
+
+    document
+      .getElementById("panelToggle")
+      .addEventListener("click", () => {
+
+        controlPanel.classList.toggle(
+          "collapsed"
+        );
+
+        document.getElementById(
+          "panelToggle"
+        ).textContent =
+          controlPanel.classList.contains(
+            "collapsed"
+          )
+            ? "+"
+            : "−";
+
+        setTimeout(
+          () => map.invalidateSize(),
+          250
+        );
+
+      });
+
+    /* =======================================================
+       LEGEND COLLAPSE
+    ======================================================== */
+
+    const legend =
+      document.getElementById("legend");
+
+    document
+      .getElementById("legendToggle")
+      .addEventListener("click", () => {
+
+        legend.classList.toggle(
+          "collapsed"
+        );
+
+        document.getElementById(
+          "legendToggle"
+        ).textContent =
+          legend.classList.contains(
+            "collapsed"
+          )
+            ? "+"
+            : "−";
+
+      });
+
+    /* =======================================================
+       RESET VIEW
+    ======================================================== */
+
+    document
+      .getElementById("resetBtn")
+      .addEventListener("click", () => {
+
+        map.flyTo(
+          SEMARANG_CENTER,
+          12,
+          {
+            duration: .8
+          }
+        );
+
+      });
+
+    /* =======================================================
+       GEOLOCATION
+    ======================================================== */
+
+    document
+      .getElementById("locateBtn")
+      .addEventListener("click", () => {
+
+        map.locate({
+          setView: true,
+          maxZoom: 16,
+          enableHighAccuracy: true
+        });
+
+      });
+
+    map.on(
+      "locationfound",
+      function(e) {
+
+        L.circleMarker(
+          e.latlng,
+          {
+            radius: 8,
+            fillColor: "#2563eb",
+            color: "#ffffff",
+            weight: 3,
+            fillOpacity: .9
+          }
+        )
+        .addTo(map)
+        .bindPopup("Lokasi perangkat Anda")
+        .openPopup();
+
+      }
+    );
+
+    map.on(
+      "locationerror",
+      function() {
+
+        alert(
+          "Lokasi perangkat tidak dapat diakses. Pastikan izin lokasi browser aktif."
+        );
+
+      }
+    );
+
+    /* =======================================================
+       COORDINATE / ZOOM
+    ======================================================== */
+
+    map.on(
+      "mousemove",
+      function(e) {
+
+        document.getElementById(
+          "latValue"
+        ).textContent =
+          e.latlng.lat.toFixed(5);
+
+        document.getElementById(
+          "lngValue"
+        ).textContent =
+          e.latlng.lng.toFixed(5);
+
+      }
+    );
+
+    map.on(
+      "zoomend",
+      function() {
+
+        document.getElementById(
+          "zoomValue"
+        ).textContent =
+          map.getZoom();
+
+      }
+    );
+
+    document.getElementById(
+      "zoomValue"
+    ).textContent =
+      map.getZoom();
+
+    /* =======================================================
+       SEARCH
+    ======================================================== */
+
+    const searchable = [];
+
+    Object.entries(layers)
+      .forEach(([layerName, layer]) => {
+
+        layer.eachLayer(child => {
+
+          if (!child.feature) return;
+
+          searchable.push({
+            layerName,
+            layer: child,
+            feature: child.feature
+          });
+
+        });
+
+      });
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const searchResults =
+      document.getElementById("searchResults");
+
+    searchInput.addEventListener(
+      "input",
+      function() {
+
+        const query =
+          this.value
+            .trim()
+            .toLowerCase();
+
+        searchResults.innerHTML = "";
+
+        if (query.length < 2) return;
+
+        const results =
+          searchable
+            .filter(item => {
+
+              return Object.values(
+                item.feature.properties || {}
+              )
+              .join(" ")
+              .toLowerCase()
+              .includes(query);
+
+            })
+            .slice(0, 8);
+
+        results.forEach(item => {
+
+          const div =
+            document.createElement("div");
+
+          div.className =
+            "search-result";
+
+          const name =
+            item.feature.properties?.name ||
+            "Unnamed feature";
+
+          const type =
+            item.feature.properties?.type ||
+            item.layerName;
+
+          div.innerHTML = `
+            <strong>${name}</strong>
+            <span>${type}</span>
+          `;
+
+          div.addEventListener(
+            "click",
+            () => {
+
+              const target =
+                item.layer;
+
+              if (target.getBounds) {
+
+                const bounds =
+                  target.getBounds();
+
+                if (bounds.isValid()) {
+
+                  map.fitBounds(
+                    bounds.pad(.8),
+                    {
+                      maxZoom: 15
+                    }
+                  );
+
+                }
+
+              } else if (
+                target.getLatLng
+              ) {
+
+                map.flyTo(
+                  target.getLatLng(),
+                  16
+                );
+
+              }
+
+              if (
+                target.openPopup
+              ) {
+                target.openPopup();
+              }
+
+              searchResults.innerHTML = "";
+              searchInput.value = name;
+
+            }
+          );
+
+          searchResults.appendChild(div);
+
+        });
+
+      });
+
+    /* =======================================================
+       MEASUREMENT
+    ======================================================== */
+
+    let measureMode = false;
+    let measurePoints = [];
+    let measureLine = null;
+    let measureMarkers = [];
+
+    document
+      .getElementById("measureBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          measureMode = !measureMode;
+
+          measurePoints = [];
+
+          if (measureLine) {
+            map.removeLayer(measureLine);
+            measureLine = null;
+          }
+
+          measureMarkers
+            .forEach(marker =>
+              map.removeLayer(marker)
+            );
+
+          measureMarkers = [];
+
+          document.getElementById(
+            "measureBtn"
+          ).style.color =
+            measureMode
+              ? "#0f766e"
+              : "#334155";
+
+        }
+      );
+
+    map.on(
+      "click",
+      function(e) {
+
+        if (!measureMode) return;
+
+        measurePoints.push(e.latlng);
+
+        const marker =
+          L.circleMarker(
+            e.latlng,
+            {
+              radius: 4,
+              color: "#0f766e",
+              fillColor: "#0f766e",
+              fillOpacity: 1
+            }
+          ).addTo(map);
+
+        measureMarkers.push(marker);
+
+        if (measurePoints.length >= 2) {
+
+          if (measureLine) {
+            map.removeLayer(measureLine);
+          }
+
+          measureLine =
+            L.polyline(
+              measurePoints,
+              {
+                color: "#0f766e",
+                weight: 3,
+                dashArray: "7 6"
+              }
+            ).addTo(map);
+
+          let distance = 0;
+
+          for (
+            let i = 1;
+            i < measurePoints.length;
+            i++
+          ) {
+
+            distance +=
+              measurePoints[i - 1]
+                .distanceTo(
+                  measurePoints[i]
+                );
+
+          }
+
+          measureLine.bindTooltip(
+            distance >= 1000
+              ? `${(
+                  distance / 1000
+                ).toFixed(2)} km`
+              : `${Math.round(
+                  distance
+                )} m`,
+            {
+              permanent: true,
+              direction: "center"
+            }
+          );
+
+        }
+
+      });
+
+    /* =======================================================
+       EXPORT GEOJSON
+    ======================================================== */
+
+    function downloadFile(
+      content,
+      filename,
+      type
+    ) {
+
+      const blob =
+        new Blob(
+          [content],
+          {
+            type
+          }
+        );
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+      a.download = filename;
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+
+    }
+
+    function getActiveGeoJSON() {
+
+      const features = [];
+
+      Object.entries(layers)
+        .forEach(([key, layer]) => {
+
+          if (!map.hasLayer(layer)) return;
+
+          const geojson =
+            layer.toGeoJSON();
+
+          if (
+            geojson.type ===
+            "FeatureCollection"
+          ) {
+
+            geojson.features
+              .forEach(feature => {
+
+                feature.properties =
+                  {
+                    ...feature.properties,
+                    source_layer: key
+                  };
+
+                features.push(feature);
+
+              });
+
+          }
+
+        });
+
+      return {
+        type: "FeatureCollection",
+        features
+      };
+
+    }
+
+    document
+      .getElementById("exportGeoJSON")
+      .addEventListener(
+        "click",
+        () => {
+
+          const data =
+            getActiveGeoJSON();
+
+          downloadFile(
+            JSON.stringify(
+              data,
+              null,
+              2
+            ),
+            "semarang-coastal-dynamics.geojson",
+            "application/geo+json"
+          );
+
+        }
+      );
+
+    /* =======================================================
+       EXPORT CSV
+    ======================================================== */
+
+    document
+      .getElementById("exportCSV")
+      .addEventListener(
+        "click",
+        () => {
+
+          const data =
+            getActiveGeoJSON();
+
+          const rows = [];
+
+          data.features.forEach(
+            feature => {
+
+              const p =
+                feature.properties || {};
+
+              const geometry =
+                feature.geometry || {};
+
+              rows.push({
+                name: p.name || "",
+                type: p.type || "",
+                severity:
+                  p.severity || "",
+                level:
+                  p.level || "",
+                rate:
+                  p.rate || "",
+                status:
+                  p.status || "",
+                longitude:
+                  geometry.type === "Point"
+                    ? geometry.coordinates[0]
+                    : "",
+                latitude:
+                  geometry.type === "Point"
+                    ? geometry.coordinates[1]
+                    : "",
+                source_layer:
+                  p.source_layer || ""
+              });
+
+            }
+          );
+
+          const headers =
+            Object.keys(
+              rows[0] || {
+                name: "",
+                type: ""
+              }
+            );
+
+          const csv = [
+            headers.join(","),
+            ...rows.map(row =>
+              headers.map(header => {
+
+                const value =
+                  row[header] ?? "";
+
+                return `"${String(value)
+                  .replace(/"/g,'""')}"`;
+
+              }).join(",")
+            )
+          ].join("\n");
+
+          downloadFile(
+            csv,
+            "semarang-coastal-dynamics.csv",
+            "text/csv;charset=utf-8"
+          );
+
+        }
+      );
+
+    /* =======================================================
+       KEYBOARD SHORTCUTS
+    ======================================================== */
+
+    document.addEventListener(
+      "keydown",
+      function(e) {
+
+        if (e.key === "Escape") {
+
+          searchInput.value = "";
+          searchResults.innerHTML = "";
+
+          map.closePopup();
+
+        }
+
+      }
+    );
+
+    /* =======================================================
+       RESPONSIVE MAP RESIZE
+    ======================================================== */
+
+    let resizeTimer;
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer =
+          setTimeout(
+            () => map.invalidateSize(),
+            150
+          );
+
+      }
+    );
+
+    /* =======================================================
+       INITIAL VIEW
+    ======================================================== */
+
+    setTimeout(() => {
+
+      map.invalidateSize();
+
+      document
+        .getElementById("loading")
+        .classList.add("hidden");
+
+    }, 650);
+
+  </script>
+
+</body>
+</html>
