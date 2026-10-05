@@ -1,4 +1,4 @@
-# Hotel Semarang
+# Singgah Semarang
 
 WebGIS persebaran hotel, penginapan, dan tempat menarik di Kota Semarang.
 
