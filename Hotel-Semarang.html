@@ -90,6 +90,10 @@
     .list button strong { font-size: 14px; }
     .list button span { color: var(--muted); font-size: 12px; }
     .disclaimer { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .downloads { margin-top: 12px; }
+    .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; }
+    .dl-grid button, .dl-grid a { display: grid; place-items: center; min-height: 34px; border: 0; border-radius: 10px; background: #f4f7f8; color: var(--ink); font-size: 12px; font-weight: 700; text-decoration: none; }
+    .dl-grid [hidden] { display: none; }
     .legend { left: 12px; bottom: 54px; display: flex; width: min(220px, calc(100vw - 180px)); max-height: min(220px, 32dvh); flex-direction: column; border-radius: 16px; overflow: hidden; }
     .legend.collapsed { width: auto; max-height: none; }
     .legend.collapsed .legend-body { display: none; }
@@ -205,7 +209,7 @@
     body[data-theme="dark"] .tools-toggle, body[data-theme="dark"] .chips button, body[data-theme="dark"] .near button,
     body[data-theme="dark"] #results button.is-on, body[data-theme="dark"] #results button:hover { background: #16343c; color: #b7e4ef; }
     body[data-theme="dark"] .tools-toggle.is-on, body[data-theme="dark"] .chips button.is-on { background: var(--ocean); color: #062028; }
-    body[data-theme="dark"] .tools button, body[data-theme="dark"] .filters select, body[data-theme="dark"] .list button, body[data-theme="dark"] .btn.ghost { background: #1a2832; color: var(--ink); }
+    body[data-theme="dark"] .tools button, body[data-theme="dark"] .filters select, body[data-theme="dark"] .list button, body[data-theme="dark"] .btn.ghost, body[data-theme="dark"] .dl-grid button, body[data-theme="dark"] .dl-grid a { background: #1a2832; color: var(--ink); }
     body[data-theme="dark"] .place-tab span, body[data-theme="dark"] .place-tab button, body[data-theme="dark"] .base-toggle, body[data-theme="dark"] .sheet-tabs { background: #121c24; color: var(--ink); }
     body[data-theme="dark"] .base-card { border-color: #121c24; }
     body[data-theme="dark"] .badge.on { background: #064e3b; color: #a7f3d0; }
@@ -251,6 +255,19 @@
       </div>
       <p class="hint" id="count"></p>
       <ul class="list" id="list"></ul>
+      <div class="downloads" id="downloads">
+        <p class="hint">Unduh vektor: titik, garis, dan poligon.</p>
+        <div class="dl-grid">
+          <button type="button" data-dl="geo-titik">Titik .geojson</button>
+          <button type="button" data-dl="geo-garis">Garis .geojson</button>
+          <button type="button" data-dl="geo-poligon">Poligon .geojson</button>
+          <button type="button" data-dl="geo-semua">Semua .geojson</button>
+          <button type="button" data-dl="csv">Titik .csv</button>
+          <button type="button" data-dl="kml">Semua .kml</button>
+          <button type="button" data-dl="zip">Paket .zip</button>
+          <a id="shp-link" href="/data/kelurahan-kota.zip" download="kelurahan-semarang-shp.zip">Poligon .shp</a>
+        </div>
+      </div>
       <p class="disclaimer"><strong>Bukan harga langsung.</strong> Kelas bintang dari direktori Dinas Kota Semarang. Tarif hanya kisaran. Titik dari OpenStreetMap. G-Maps membuka koordinat yang sama.</p>
       <button type="button" class="more" id="about-open">Tentang data</button>
     </div>
@@ -258,12 +275,12 @@
   <aside class="legend glass collapsed" id="legend">
     <div class="legend-head"><strong>Legenda</strong><button type="button" class="icon-btn" id="legend-toggle" aria-label="Buka legenda">+</button></div>
     <div class="legend-body"><ul>
-      <li><i class="swatch" style="background:#b45309"></i> Hotel</li>
-      <li><i class="swatch" style="background:#0f766e"></i> Wisata</li>
-      <li><i class="swatch" style="background:#1d4ed8"></i> Belanja</li>
-      <li><i class="swatch" style="background:#334155"></i> Transport</li>
-      <li><i class="swatch line"></i> Jalan utama</li>
-      <li><i class="swatch" style="background:#94a3b8"></i> Batas kelurahan</li>
+      <li><i class="swatch" style="background:#b45309"></i> Titik hotel</li>
+      <li><i class="swatch" style="background:#0f766e"></i> Titik wisata</li>
+      <li><i class="swatch" style="background:#1d4ed8"></i> Titik belanja</li>
+      <li><i class="swatch" style="background:#334155"></i> Titik transport</li>
+      <li><i class="swatch line"></i> Garis jalan</li>
+      <li><i class="swatch" style="background:#94a3b8"></i> Poligon kelurahan</li>
     </ul></div>
   </aside>
   <div class="place-wrap" id="place" hidden>
@@ -302,6 +319,7 @@
       <p>Batas kelurahan mencakup 177 kelurahan Kota Semarang. Jalan utama (tol, arteri, dan kolektor) digambar sebagai lapisan vektor. Jalan kampung tetap ada di peta dasar Jalan, supaya berkas peta tetap ringan.</p>
       <p>Kelas bintang mengikuti direktori hotel Dinas Kota Semarang bila namanya cocok. Tarif adalah kisaran, bukan harga kamar hari ini. Ulasan Google tidak disalin. Tombol G-Maps membuka koordinat itu supaya bisa dicek langsung.</p>
       <p>Rute memakai jaringan jalan terbuka. Kalau gagal, peta menampilkan jarak lurus. Jarak “dari Anda” baru muncul setelah lokasi diizinkan.</p>
+      <p>Titik, garis, dan poligon bisa diunduh dari daftar: GeoJSON terpisah, CSV titik, KML, atau satu paket ZIP. Berkas SHP poligon ikut bila situs dijalankan dari server.</p>
       <p>Mode gelap mengikuti perangkat. Tombol bulan atau matahari menguncinya; tahan tombol itu untuk kembali otomatis. Peta jalan dan topografi ikut gelap, satelit tetap.</p>
     </div>
   </section>
@@ -333,6 +351,7 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
       };
       const SIMPANG = L.latLng(-6.9932, 110.4208);
       const state = { base: "light", group: "semua", star: "", kec: "Semua", tool: null };
+      let vectors = null;
       let places = [];
       let selected = null;
       let userLL = null;
@@ -897,6 +916,7 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
       });
       toolButton("jarak", "Jarak", "Ukur jarak", icon("M4 19L19 4M14 4h5v5"), () => setTool("jarak"));
       toolButton("luas", "Luas", "Ukur luas", icon("M4 8l6-4 10 4-4 12H8z"), () => setTool("luas"));
+      toolButton("", "Data", "Unduh data vektor", icon("M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"), () => openDownloads());
 
       on(document.getElementById("search-form"), "submit", (event) => event.preventDefault());
       on(document.getElementById("search"), "input", (event) => {
@@ -995,12 +1015,152 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
       on(window, "resize", () => { applyLayout(); map.invalidateSize(); });
       applyLayout();
 
+      function openDownloads() {
+        userChosePanel = true;
+        document.body.dataset.panel = "open";
+        const toggle = document.getElementById("panel-toggle");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.textContent = "–";
+        if (window.innerWidth <= 768) {
+          document.body.dataset.sheet = "daftar";
+          document.querySelectorAll(".sheet-tabs button").forEach((btn) => btn.classList.toggle("is-on", btn.dataset.tab === "daftar"));
+        }
+        const box = document.getElementById("downloads");
+        if (box && box.scrollIntoView) box.scrollIntoView({ block: "nearest" });
+      }
+      function downloadBlob(filename, blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); a.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+      function downloadText(filename, text, type) {
+        downloadBlob(filename, new Blob([text], { type: type || "application/geo+json" }));
+      }
+      function csvCell(value) {
+        const text = value == null ? "" : Array.isArray(value) ? value.join("; ") : String(value);
+        return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+      }
+      function pointsCsv(fc) {
+        const keys = ["name", "group", "kind", "stars", "price", "hours", "address", "kelurahan", "kecamatan", "phone", "web"];
+        const rows = [["lat", "lon"].concat(keys).join(",")];
+        fc.features.forEach((feature) => {
+          const coords = feature.geometry.coordinates;
+          rows.push([feature.geometry.coordinates[1], coords[0]].concat(keys.map((key) => feature.properties[key])).map(csvCell).join(","));
+        });
+        return rows.join("\n");
+      }
+      function xml(value) { return String(value || "").replace(/&/g, "&").replace(/</g, "<"); }
+      function kmlCoords(coords) { return coords.map((pair) => pair[0] + "," + pair[1]).join(" "); }
+      function kmlGeometry(geometry) {
+        if (!geometry) return "";
+        if (geometry.type === "Point") return "<Point><coordinates>" + geometry.coordinates[0] + "," + geometry.coordinates[1] + "</coordinates></Point>";
+        if (geometry.type === "LineString") return "<LineString><coordinates>" + kmlCoords(geometry.coordinates) + "</coordinates></LineString>";
+        if (geometry.type === "Polygon") return "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + kmlCoords(geometry.coordinates[0]) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>";
+        if (geometry.type === "MultiPolygon") return geometry.coordinates.map((poly) => "<Polygon><outerBoundaryIs><LinearRing><coordinates>" + kmlCoords(poly[0]) + "</coordinates></LinearRing></outerBoundaryIs></Polygon>").join("");
+        return "";
+      }
+      function kmlFolder(name, fc) {
+        const placemarks = fc.features.map((feature) => "<Placemark><name>" + xml(feature.properties.name || feature.properties.kelas || "Tanpa nama") + "</name>" + kmlGeometry(feature.geometry) + "</Placemark>").join("");
+        return "<Folder><name>" + xml(name) + "</name>" + placemarks + "</Folder>";
+      }
+      function toKml(data) {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>Singgah Semarang</name>"
+          + kmlFolder("Titik", data.tempat) + kmlFolder("Garis", data.jalan) + kmlFolder("Poligon", data.kel)
+          + "</Document></kml>";
+      }
+      const CRC_TABLE = new Uint32Array(256);
+      for (let i = 0; i < 256; i += 1) {
+        let c = i;
+        for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+        CRC_TABLE[i] = c >>> 0;
+      }
+      function crc32(bytes) {
+        let c = 0xffffffff;
+        for (let i = 0; i < bytes.length; i += 1) c = CRC_TABLE[(c ^ bytes[i]) & 255] ^ (c >>> 8);
+        return (c ^ 0xffffffff) >>> 0;
+      }
+      function zipStore(files) {
+        const encoder = new TextEncoder();
+        const parts = [];
+        const central = [];
+        let offset = 0;
+        files.forEach((file) => {
+          const name = encoder.encode(file.name);
+          const data = encoder.encode(file.data);
+          const crc = crc32(data);
+          const local = new DataView(new ArrayBuffer(30));
+          local.setUint32(0, 0x04034b50, true);
+          local.setUint16(4, 20, true);
+          local.setUint32(14, crc, true);
+          local.setUint32(18, data.length, true);
+          local.setUint32(22, data.length, true);
+          local.setUint16(26, name.length, true);
+          parts.push(new Uint8Array(local.buffer), name, data);
+          const cen = new DataView(new ArrayBuffer(46));
+          cen.setUint32(0, 0x02014b50, true);
+          cen.setUint16(4, 20, true);
+          cen.setUint16(6, 20, true);
+          cen.setUint32(16, crc, true);
+          cen.setUint32(20, data.length, true);
+          cen.setUint32(24, data.length, true);
+          cen.setUint16(28, name.length, true);
+          cen.setUint32(42, offset, true);
+          central.push(new Uint8Array(cen.buffer), name);
+          offset += 30 + name.length + data.length;
+        });
+        const centralSize = central.reduce((sum, part) => sum + part.length, 0);
+        const end = new DataView(new ArrayBuffer(22));
+        end.setUint32(0, 0x06054b50, true);
+        end.setUint16(8, files.length, true);
+        end.setUint16(10, files.length, true);
+        end.setUint32(12, centralSize, true);
+        end.setUint32(16, offset, true);
+        const chunks = parts.concat(central, new Uint8Array(end.buffer));
+        const out = new Uint8Array(chunks.reduce((sum, part) => sum + part.length, 0));
+        let cursor = 0;
+        chunks.forEach((part) => { out.set(part, cursor); cursor += part.length; });
+        return out;
+      }
+      function saveVector(kind) {
+        if (!vectors) { toast("Data vektor masih dimuat."); return; }
+        const pretty = (fc) => JSON.stringify(fc);
+        if (kind === "geo-titik") downloadText("singgah-titik.geojson", pretty(vectors.tempat));
+        else if (kind === "geo-garis") downloadText("singgah-garis.geojson", pretty(vectors.jalan));
+        else if (kind === "geo-poligon") downloadText("singgah-poligon.geojson", pretty(vectors.kel));
+        else if (kind === "geo-semua") {
+          const features = vectors.tempat.features.map((f) => ({ type: "Feature", geometry: f.geometry, properties: Object.assign({ vektor: "titik" }, f.properties) }))
+            .concat(vectors.jalan.features.map((f) => ({ type: "Feature", geometry: f.geometry, properties: Object.assign({ vektor: "garis" }, f.properties) })))
+            .concat(vectors.kel.features.map((f) => ({ type: "Feature", geometry: f.geometry, properties: Object.assign({ vektor: "poligon" }, f.properties) })));
+          downloadText("singgah-semarang.geojson", pretty({ type: "FeatureCollection", features }));
+        } else if (kind === "csv") downloadText("singgah-titik.csv", pointsCsv(vectors.tempat), "text/csv");
+        else if (kind === "kml") downloadText("singgah-semarang.kml", toKml(vectors), "application/vnd.google-earth.kml+xml");
+        else if (kind === "zip") {
+          const files = [
+            { name: "titik.geojson", data: pretty(vectors.tempat) },
+            { name: "garis.geojson", data: pretty(vectors.jalan) },
+            { name: "poligon.geojson", data: pretty(vectors.kel) },
+            { name: "titik.csv", data: pointsCsv(vectors.tempat) },
+            { name: "singgah-semarang.kml", data: toKml(vectors) }
+          ];
+          downloadBlob("singgah-semarang-vektor.zip", new Blob([zipStore(files)], { type: "application/zip" }));
+        }
+        toast("Berkas diunduh.");
+      }
+      document.querySelectorAll("#downloads [data-dl]").forEach((btn) => on(btn, "click", () => saveVector(btn.dataset.dl)));
+      if (location.protocol === "file:") {
+        const shp = document.getElementById("shp-link");
+        if (shp) shp.hidden = true;
+      }
+
       const tempat = window.HOTEL_DATA.tempat;
       const jalan = window.HOTEL_DATA.jalan;
       const kel = window.HOTEL_DATA.kel;
       Promise.resolve()
         .then(() => {
           if (!alive) return;
+          vectors = { tempat, jalan, kel };
           places = tempat.features.map((f) => ({ ...f.properties, lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1] }));
           const kecs = [...new Set(places.map((p) => p.kecamatan).filter(Boolean))].sort((a, b) => a.localeCompare(b, "id"));
           const kecSelect = document.getElementById("kec");
