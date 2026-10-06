@@ -100,7 +100,18 @@
     .legend.collapsed .legend-head { padding: 6px 6px 6px 12px; }
     .legend-body ul { list-style: none; margin: 0; padding: 0 0 8px; }
     .legend-body li { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
-    .legend-note { display: block; margin-top: 4px; font-size: 11px; line-height: 1.35; }
+    .layer-row { display: grid; grid-template-columns: 14px 1fr auto; gap: 8px; align-items: center; min-height: 28px; margin: 0; font-size: 13px; color: var(--ink); }
+    .layer-row.is-off { color: var(--muted); }
+    .layer-row .mark { width: 12px; height: 12px; border-radius: 50%; }
+    .layer-row .mark.line { height: 0; border-top: 3px solid currentColor; border-radius: 0; background: none !important; }
+    .layer-row .mark.area { border-radius: 3px; }
+    .switch { position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 999px; background: #d5dee3; }
+    .switch i { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform .15s ease; }
+    .switch.is-on { background: var(--ocean); }
+    .switch.is-on i { transform: translateX(16px); }
+    .opacity-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; margin: 8px 0 10px; font-size: 12px; color: var(--muted); }
+    .opacity-row input { grid-column: 1 / -1; width: 100%; accent-color: var(--ocean); }
+    .opacity-row strong { color: var(--ink); font-size: 12px; }
     .swatch { width: 12px; height: 12px; border-radius: 50%; flex: none; }
     .swatch.line { height: 0; border-top: 3px solid #64748b; border-radius: 0; background: none; }
     .place-wrap { left: 50%; bottom: 16px; transform: translateX(-50%); width: min(340px, calc(100vw - 24px)); z-index: 720; }
@@ -217,6 +228,7 @@
     body[data-theme="dark"] .badge.off { background: #4c0519; color: #fecdd3; }
     body[data-theme="dark"] .leaflet-tooltip, body[data-theme="dark"] .tip { background: #1a242c; color: #e8eef2; border: 0; box-shadow: var(--shadow); }
     body[data-theme="dark"] .leaflet-control-scale-line { background: rgba(16,26,34,.9); color: #e8eef2; border-color: rgba(255,255,255,.35); }
+    body[data-theme="dark"] .switch { background: #24323c; }
     body[data-theme="dark"] .spin { border-color: #24323c; border-top-color: var(--ocean); }
   </style>
 </head>
@@ -276,16 +288,15 @@
     </div>
   </aside>
   <aside class="legend glass collapsed" id="legend">
-    <div class="legend-head"><strong>Legenda</strong><button type="button" class="icon-btn" id="legend-toggle" aria-label="Buka legenda">+</button></div>
-    <div class="legend-body"><ul>
-      <li><i class="swatch" style="background:#b45309"></i> Titik hotel</li>
-      <li><i class="swatch" style="background:#0f766e"></i> Titik wisata</li>
-      <li><i class="swatch" style="background:#1d4ed8"></i> Titik belanja</li>
-      <li><i class="swatch" style="background:#334155"></i> Titik transport</li>
-      <li><i class="swatch line"></i> Jalan utama</li>
-      <li><i class="swatch line" style="border-top-color:#5f8f62"></i> Jalan kecil</li>
-      <li class="legend-note">Warna daerah mengikuti kecamatan. Tiap kelurahan sedikit berbeda.</li>
-    </ul><ul id="legend-kec"></ul></div>
+    <div class="legend-head"><strong>Lapisan</strong><button type="button" class="icon-btn" id="legend-toggle" aria-label="Buka lapisan">+</button></div>
+    <div class="legend-body">
+      <div id="layer-list"></div>
+      <label class="opacity-row">Transparansi daerah<strong id="op-val">58%</strong>
+        <input id="area-opacity" type="range" min="0" max="90" value="58" aria-valuemin="0" aria-valuemax="90" aria-valuenow="58" aria-label="Transparansi warna daerah">
+      </label>
+      <p class="legend-note">Kiri lebih pekat, kanan lebih tembus. Warna mengikuti kecamatan.</p>
+      <ul id="legend-kec"></ul>
+    </div>
   </aside>
   <div class="place-wrap" id="place" hidden>
     <div class="place-tab"><span id="place-cat">Hotel</span><button type="button" id="place-close" aria-label="Tutup kartu">×</button></div>
@@ -311,7 +322,7 @@
   <nav class="sheet-tabs" aria-label="Panel">
     <button type="button" data-tab="daftar">Daftar</button>
     <button type="button" data-tab="peta">Peta</button>
-    <button type="button" data-tab="legend">Legenda</button>
+    <button type="button" data-tab="legend">Lapisan</button>
   </nav>
   <div class="base-dock" id="bases" role="group" aria-label="Peta dasar"></div>
   <footer class="status glass"><button type="button" id="copy-xy">Lintang <span id="lat">–</span> · Bujur <span id="lng">–</span></button><span>Zoom <strong id="zoom">–</strong></span></footer>
@@ -324,7 +335,7 @@
       <p>Kelas bintang mengikuti direktori hotel Dinas Kota Semarang bila namanya cocok. Tarif adalah kisaran, bukan harga kamar hari ini. Ulasan Google tidak disalin. Tombol G-Maps membuka koordinat itu supaya bisa dicek langsung.</p>
       <p>Rute memakai jaringan jalan terbuka. Kalau gagal, peta menampilkan jarak lurus. Jarak “dari Anda” baru muncul setelah lokasi diizinkan.</p>
       <p>Titik, garis, dan poligon bisa diunduh dari daftar: GeoJSON terpisah, CSV titik, KML, atau satu paket ZIP. Berkas SHP poligon ikut bila situs dijalankan dari server.</p>
-      <p>Mode gelap hanya mengubah menu. Peta tetap mengikuti pilihan peta dasar.</p>
+      <p>Setiap lapisan bisa dimatikan dari panel Lapisan. Transparansi hanya mengubah warna daerah, bukan peta dasarnya. Mode gelap hanya mengubah menu.</p>
     </div>
   </section>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -353,6 +364,22 @@
       };
       const SIMPANG = L.latLng(-6.9932, 110.4208);
       const state = { base: "light", group: "semua", star: "", kec: "Semua", tool: null };
+      const LAYERS = [
+        { id: "hotel", name: "Hotel", color: "#b45309" },
+        { id: "wisata", name: "Wisata", color: "#0f766e" },
+        { id: "belanja", name: "Belanja", color: "#1d4ed8" },
+        { id: "transport", name: "Transport", color: "#334155" },
+        { id: "jalan", name: "Jalan utama", color: "#334155", mark: "line" },
+        { id: "kecil", name: "Jalan kecil", color: "#5f8f62", mark: "line" },
+        { id: "kel", name: "Daerah", color: "#7dba9a", mark: "area" }
+      ];
+      const layersOn = { hotel: true, wisata: true, belanja: true, transport: true, jalan: true, kecil: true, kel: true };
+      let areaClear = 58;
+      try {
+        const savedLayers = JSON.parse(localStorage.getItem("singgah-layers") || "null");
+        if (savedLayers && savedLayers.on) LAYERS.forEach((layer) => { if (typeof savedLayers.on[layer.id] === "boolean") layersOn[layer.id] = savedLayers.on[layer.id]; });
+        if (savedLayers && typeof savedLayers.clear === "number") areaClear = savedLayers.clear;
+      } catch (err) { /* pengaturan lapisan tidak tersimpan */ }
       let vectors = null;
       let places = [];
       let selected = null;
@@ -589,6 +616,12 @@
         drawPlaces();
       }
       function focusPlace(place, fly) {
+        if (place && layersOn[place.group] === false) {
+          layersOn[place.group] = true;
+          saveLayers();
+          paintLayers();
+          drawPlaces();
+        }
         renderCard(place);
         if (window.innerWidth <= 768) { document.body.dataset.panel = "shut"; document.querySelectorAll(".sheet-tabs button").forEach((b) => b.classList.remove("is-on")); }
         if (!fly) return;
@@ -658,7 +691,7 @@
       function drawPlaces() {
         if (placeLayer) placeLayer.remove();
         placeLayer = L.layerGroup();
-        const items = filtered();
+        const items = filtered().filter((place) => layersOn[place.group] !== false);
         const zoom = map.getZoom();
         if (zoom >= 15) {
           items.forEach((p) => {
@@ -860,7 +893,55 @@
       function kelStyle(feature) {
         const sat = state.base === "imagery";
         const warna = (feature && feature.properties && feature.properties.warna) || "#0b6e8a";
-        return { pane: "kelPane", color: sat ? "#e2e8f0" : "#ffffff", weight: sat ? 0.5 : 0.8, fillColor: warna, fillOpacity: sat ? 0.14 : 0.42 };
+        return { pane: "kelPane", color: sat ? "#e2e8f0" : "#ffffff", weight: sat ? 0.5 : 0.8, fillColor: warna, fillOpacity: sat ? (1 - areaClear / 100) * 0.35 : (1 - areaClear / 100) };
+      }
+      function saveLayers() {
+        try { localStorage.setItem("singgah-layers", JSON.stringify({ on: layersOn, clear: areaClear })); } catch (err) { /* penyimpanan lapisan ditolak */ }
+      }
+      function applyLayerVisibility() {
+        if (roadLayer) { if (layersOn.jalan) roadLayer.addTo(map); else roadLayer.remove(); }
+        if (laneLayer) { if (layersOn.kecil) laneLayer.addTo(map); else laneLayer.remove(); }
+        if (kelLayer) {
+          if (layersOn.kel) { kelLayer.addTo(map); kelLayer.setStyle(kelStyle); }
+          else kelLayer.remove();
+        }
+        const key = document.getElementById("legend-kec");
+        if (key) key.hidden = !layersOn.kel;
+      }
+      function paintLayers() {
+        const box = document.getElementById("layer-list");
+        box.replaceChildren();
+        LAYERS.forEach((layer) => {
+          const row = document.createElement("div");
+          row.className = "layer-row" + (layersOn[layer.id] ? "" : " is-off");
+          const mark = document.createElement("i");
+          mark.className = "mark" + (layer.mark ? " " + layer.mark : "");
+          mark.style.background = layer.color;
+          if (layer.mark === "line") mark.style.borderTopColor = layer.color;
+          const name = document.createElement("span");
+          name.textContent = layer.name;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "switch" + (layersOn[layer.id] ? " is-on" : "");
+          button.setAttribute("role", "switch");
+          button.setAttribute("aria-checked", layersOn[layer.id] ? "true" : "false");
+          button.setAttribute("aria-label", layer.name);
+          button.innerHTML = "<i></i>";
+          button.addEventListener("click", () => {
+            layersOn[layer.id] = !layersOn[layer.id];
+            saveLayers();
+            paintLayers();
+            applyLayerVisibility();
+            drawPlaces();
+          });
+          row.append(mark, name, button);
+          box.appendChild(row);
+        });
+        const slider = document.getElementById("area-opacity");
+        const label = document.getElementById("op-val");
+        slider.value = String(areaClear);
+        slider.setAttribute("aria-valuenow", String(areaClear));
+        label.textContent = areaClear + "%";
       }
       function paintThemeButton() {
         const theme = resolvedTheme();
@@ -899,6 +980,14 @@
       });
       if (themeMedia.addEventListener) themeMedia.addEventListener("change", () => { if (themeMode === "auto") setThemeMode("auto"); });
       paintThemeButton();
+      paintLayers();
+      on(document.getElementById("area-opacity"), "input", (event) => {
+        areaClear = Number(event.target.value);
+        event.target.setAttribute("aria-valuenow", String(areaClear));
+        document.getElementById("op-val").textContent = areaClear + "%";
+        saveLayers();
+        if (kelLayer && layersOn.kel) kelLayer.setStyle(kelStyle);
+      });
 
       GROUPS.forEach(([id, label]) => {
         const btn = document.createElement("button");
@@ -1201,6 +1290,7 @@
           }).addTo(map);
           laneLayer = L.geoJSON(kecil, { pane: "lanePane", style: laneStyle, interactive: false }).addTo(map);
           roadLayer = L.geoJSON(jalan, { pane: "roadPane", style: roadStyle, interactive: false }).addTo(map);
+          applyLayerVisibility();
           drawPlaces();
           renderList();
           map.invalidateSize();
