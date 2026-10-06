@@ -145,7 +145,7 @@
     .base-dock.is-open .base-toggle svg { transform: rotate(180deg); }
     .base-card { position: relative; width: 72px; height: 64px; padding: 0; border: 2px solid white; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); background: #d5dbe0; }
     .base-card.is-on { border-color: var(--ocean); box-shadow: 0 0 0 2px var(--ocean), var(--shadow); }
-    .base-card span { position: absolute; left: 0; right: 0; bottom: 0; padding: 2px 4px 3px; background: rgba(12,22,28,.72); color: white; font-size: 10px; font-weight: 800; text-align: center; }
+    .base-card span { position: absolute; left: 0; right: 0; bottom: 0; padding: 2px 3px 3px; background: rgba(12,22,28,.72); color: white; font-size: 10px; font-weight: 800; letter-spacing: -0.02em; text-align: center; white-space: nowrap; }
     .thumb { position: absolute; inset: 0 0 16px 0; }
     .thumb-light { background: linear-gradient(160deg, #eef2f4, #c9d3da); }
     .thumb-osm { background: #e5f0df; }
@@ -316,7 +316,7 @@
     <div class="about-head"><h2 id="about-title">Tentang peta</h2><button type="button" class="icon-btn" id="about-close" aria-label="Tutup">×</button></div>
     <div class="about-body">
       <p><strong>Singgah Semarang</strong> memetakan penginapan dan tempat menarik di seluruh kota, bukan hanya Semarang Utara dan Genuk.</p>
-      <p>Batas kelurahan mencakup 177 kelurahan Kota Semarang. Jalan utama (tol, arteri, dan kolektor) digambar sebagai lapisan vektor. Jalan kampung tetap ada di peta dasar Jalan, supaya berkas peta tetap ringan.</p>
+      <p>Batas kelurahan mencakup 177 kelurahan Kota Semarang. Jalan utama (tol, arteri, dan kolektor) digambar sebagai lapisan vektor. Jalan kampung tetap ada di peta dasar Jalan kota, supaya berkas peta tetap ringan.</p>
       <p>Kelas bintang mengikuti direktori hotel Dinas Kota Semarang bila namanya cocok. Tarif adalah kisaran, bukan harga kamar hari ini. Ulasan Google tidak disalin. Tombol G-Maps membuka koordinat itu supaya bisa dicek langsung.</p>
       <p>Rute memakai jaringan jalan terbuka. Kalau gagal, peta menampilkan jarak lurus. Jarak “dari Anda” baru muncul setelah lokasi diizinkan.</p>
       <p>Titik, garis, dan poligon bisa diunduh dari daftar: GeoJSON terpisah, CSV titik, KML, atau satu paket ZIP. Berkas SHP poligon ikut bila situs dijalankan dari server.</p>
@@ -344,10 +344,10 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
       const COLORS = { hotel: "#b45309", wisata: "#0f766e", belanja: "#1d4ed8", transport: "#334155" };
       const GROUPS = [["semua", "Semua"], ["hotel", "Hotel"], ["wisata", "Wisata"], ["belanja", "Belanja"], ["transport", "Transport"]];
       const BASEMAPS = {
-        light: { name: "Terang", url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", nativeZoom: 16 },
-        osm: { name: "Jalan", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 },
-        imagery: { name: "Satelit", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 },
-        topo: { name: "Topografi", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 }
+        light: { name: "Bersih", hint: "Kanvas terang, supaya titik mudah dilihat", url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", nativeZoom: 16 },
+        osm: { name: "Jalan kota", hint: "Jalan, blok, dan nama tempat", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 },
+        imagery: { name: "Udara", hint: "Foto satelit", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 },
+        topo: { name: "Medan", hint: "Bentuk lahan dan ketinggian", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 }
       };
       const SIMPANG = L.latLng(-6.9932, 110.4208);
       const state = { base: "light", group: "semua", star: "", kec: "Semua", tool: null };
@@ -807,6 +807,8 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
           const btn = document.createElement("button");
           btn.type = "button"; btn.className = "base-card"; btn.dataset.base = id;
           btn.innerHTML = '<i class="thumb thumb-' + (id === "osm" ? "osm" : id) + '"></i><span>' + BASEMAPS[id].name + "</span>";
+          btn.title = BASEMAPS[id].hint || BASEMAPS[id].name;
+          btn.setAttribute("aria-label", BASEMAPS[id].name);
           btn.addEventListener("click", () => setBasemap(id));
           dock.appendChild(btn);
         });
