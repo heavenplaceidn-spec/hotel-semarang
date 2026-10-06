@@ -203,7 +203,7 @@
       --ink: #e8eef2; --muted: #9aadb8; --paper: rgba(16, 26, 34, 0.94); --line: rgba(255,255,255,.12);
       --ocean: #67c7df; --shadow: 0 14px 36px rgba(0,0,0,.45); background: #0c141a; color-scheme: dark;
     }
-    body[data-theme="dark"] #map, body[data-theme="dark"] .leaflet-container, body[data-theme="dark"] #loader { background: #10181e; color: var(--ink); }
+    body[data-theme="dark"] #loader { background: #10181e; color: var(--ink); }
     body[data-theme="dark"] .glass { border-color: rgba(255,255,255,.08); }
     body[data-theme="dark"] .theme-toggle { background: #16343c; color: #fbbf24; }
     body[data-theme="dark"] .tools-toggle, body[data-theme="dark"] .chips button, body[data-theme="dark"] .near button,
@@ -320,7 +320,7 @@
       <p>Kelas bintang mengikuti direktori hotel Dinas Kota Semarang bila namanya cocok. Tarif adalah kisaran, bukan harga kamar hari ini. Ulasan Google tidak disalin. Tombol G-Maps membuka koordinat itu supaya bisa dicek langsung.</p>
       <p>Rute memakai jaringan jalan terbuka. Kalau gagal, peta menampilkan jarak lurus. Jarak “dari Anda” baru muncul setelah lokasi diizinkan.</p>
       <p>Titik, garis, dan poligon bisa diunduh dari daftar: GeoJSON terpisah, CSV titik, KML, atau satu paket ZIP. Berkas SHP poligon ikut bila situs dijalankan dari server.</p>
-      <p>Mode gelap mengikuti perangkat. Tombol bulan atau matahari menguncinya; tahan tombol itu untuk kembali otomatis. Peta jalan dan topografi ikut gelap, satelit tetap.</p>
+      <p>Mode gelap hanya mengubah menu. Peta tetap mengikuti pilihan peta dasar.</p>
     </div>
   </section>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -344,10 +344,10 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
       const COLORS = { hotel: "#b45309", wisata: "#0f766e", belanja: "#1d4ed8", transport: "#334155" };
       const GROUPS = [["semua", "Semua"], ["hotel", "Hotel"], ["wisata", "Wisata"], ["belanja", "Belanja"], ["transport", "Transport"]];
       const BASEMAPS = {
-        light: { name: "Terang", url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", darkUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", darkLabels: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}", nativeZoom: 16 },
-        osm: { name: "Jalan", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", invert: true, nativeZoom: 19 },
+        light: { name: "Terang", url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", nativeZoom: 16 },
+        osm: { name: "Jalan", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 },
         imagery: { name: "Satelit", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", labels: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 },
-        topo: { name: "Topografi", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", invert: true, nativeZoom: 19 }
+        topo: { name: "Topografi", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", nativeZoom: 19 }
       };
       const SIMPANG = L.latLng(-6.9932, 110.4208);
       const state = { base: "light", group: "semua", star: "", kec: "Semua", tool: null };
@@ -819,25 +819,13 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
         });
         dock.appendChild(toggle);
       }
-      function tileFilter(layer, on) {
-        const el = layer && layer.getContainer();
-        if (el) el.style.filter = on ? "invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.95)" : "";
-      }
       function setBasemap(id) {
         state.base = id;
         const spec = BASEMAPS[id];
-        const dark = document.body.dataset.theme === "dark";
         if (baseLayer) baseLayer.remove();
         if (labelTiles) { labelTiles.remove(); labelTiles = null; }
-        const url = dark && spec.darkUrl ? spec.darkUrl : spec.url;
-        const labels = dark && spec.darkLabels ? spec.darkLabels : spec.labels;
-        const invert = !!(dark && spec.invert && !spec.darkUrl);
-        baseLayer = L.tileLayer(url, { maxZoom: 18, maxNativeZoom: spec.nativeZoom, updateWhenIdle: true }).addTo(map);
-        tileFilter(baseLayer, invert);
-        if (labels) {
-          labelTiles = L.tileLayer(labels, { maxZoom: 18, maxNativeZoom: spec.nativeZoom, pane: "shadowPane" }).addTo(map);
-          tileFilter(labelTiles, invert);
-        }
+        baseLayer = L.tileLayer(spec.url, { maxZoom: 18, maxNativeZoom: spec.nativeZoom, updateWhenIdle: true }).addTo(map);
+        if (spec.labels) labelTiles = L.tileLayer(spec.labels, { maxZoom: 18, maxNativeZoom: spec.nativeZoom, pane: "shadowPane" }).addTo(map);
         document.getElementById("map").dataset.base = id;
         document.querySelectorAll(".base-card").forEach((btn) => btn.classList.toggle("is-on", btn.dataset.base === id));
         if (roadLayer) roadLayer.setStyle(roadStyle);
@@ -845,15 +833,13 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
       }
       function roadStyle(feature) {
         const kelas = feature.properties.kelas;
-        const dark = document.body.dataset.theme === "dark";
         const sat = state.base === "imagery";
         const weight = kelas === "motorway" || kelas === "trunk" ? 3 : kelas === "primary" ? 2.2 : 1.3;
-        return { pane: "roadPane", color: sat || dark ? "#f8fafc" : "#64748b", weight: feature.properties.link ? Math.max(1, weight - 1) : weight, opacity: sat || dark ? 0.85 : 0.72, interactive: false };
+        return { pane: "roadPane", color: sat ? "#f8fafc" : "#64748b", weight: feature.properties.link ? Math.max(1, weight - 1) : weight, opacity: sat ? 0.8 : 0.72, interactive: false };
       }
       function kelStyle() {
-        const dark = document.body.dataset.theme === "dark";
         const sat = state.base === "imagery";
-        return { pane: "kelPane", color: sat || dark ? "#e2e8f0" : "#64748b", weight: 0.8, fillColor: "#0b6e8a", fillOpacity: dark ? 0.08 : 0.03 };
+        return { pane: "kelPane", color: sat ? "#e2e8f0" : "#64748b", weight: 0.8, fillColor: "#0b6e8a", fillOpacity: 0.03 };
       }
       function paintThemeButton() {
         const theme = resolvedTheme();
@@ -869,7 +855,6 @@ window.HOTEL_DATA = {tempat:{"type":"FeatureCollection","features":[{"type":"Fea
         themeMode = mode;
         try { localStorage.setItem("singgah-theme", mode); } catch (err) { /* simpanan mode tidak tersedia */ }
         paintThemeButton();
-        if (baseLayer) setBasemap(state.base);
       }
       let themeHold = 0;
       let themeHeld = false;
