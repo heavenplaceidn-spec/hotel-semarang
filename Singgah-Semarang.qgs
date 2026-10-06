@@ -1,0 +1,479 @@
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis version="3.28.15-Firenze" projectname="Singgah Semarang">
+  <homePath path=""/>
+  <title>Singgah Semarang</title>
+  <projectCrs>
+    <spatialrefsys>
+      <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+      <srsid>3452</srsid>
+      <srid>4326</srid>
+      <authid>EPSG:4326</authid>
+      <description>WGS 84</description>
+      <projectionacronym>longlat</projectionacronym>
+      <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+      <geographicflag>true</geographicflag>
+    </spatialrefsys>
+  </projectCrs>
+  <layer-tree-group>
+    <layer-tree-layer source="data/tempat.geojson" providerKey="ogr" name="Tempat" id="tempat_singgah" checked="Qt::Checked" expanded="1"><customproperties/></layer-tree-layer><layer-tree-layer source="data/jalan-utama.geojson" providerKey="ogr" name="Jalan utama" id="jalan_utama_singgah" checked="Qt::Checked" expanded="1"><customproperties/></layer-tree-layer><layer-tree-layer source="data/jalan-kecil.geojson" providerKey="ogr" name="Jalan kecil" id="jalan_kecil_singgah" checked="Qt::Checked" expanded="1"><customproperties/></layer-tree-layer><layer-tree-layer source="data/kelurahan-ringan.geojson" providerKey="ogr" name="Kelurahan" id="kelurahan_singgah" checked="Qt::Checked" expanded="1"><customproperties/></layer-tree-layer>
+  </layer-tree-group>
+  <layerorder>
+    <layer id="tempat_singgah"/><layer id="jalan_utama_singgah"/><layer id="jalan_kecil_singgah"/><layer id="kelurahan_singgah"/>
+  </layerorder>
+  <projectlayers>
+    <maplayer geometry="Polygon" type="vector" wkbType="MultiPolygon" simplifyDrawingHints="1" labelsEnabled="0" readOnly="0" refreshOnNotifyEnabled="0" hasScaleBasedVisibilityFlag="0" autoRefreshEnabled="0" minScale="1e+08" maxScale="0" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0">
+      <extent>
+        <xmin>110.26984</xmin>
+        <ymin>-7.11529</ymin>
+        <xmax>110.50316</xmax>
+        <ymax>-6.93139</ymax>
+      </extent>
+      <id>kelurahan_singgah</id>
+      <datasource>data/kelurahan-ringan.geojson</datasource>
+      <layername>Kelurahan</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="UTF-8">ogr</provider>
+      <encoding>UTF-8</encoding>
+      <renderer-v2 type="categorizedSymbol" attr="kecamatan" forceraster="0" symbollevels="0" enableorderby="0">
+        <categories>
+          <category render="true" symbol="0" value="Banyumanik" label="Banyumanik"/><category render="true" symbol="1" value="Candisari" label="Candisari"/><category render="true" symbol="2" value="Gajahmungkur" label="Gajahmungkur"/><category render="true" symbol="3" value="Gayamsari" label="Gayamsari"/><category render="true" symbol="4" value="Genuk" label="Genuk"/><category render="true" symbol="5" value="Gunungpati" label="Gunungpati"/><category render="true" symbol="6" value="Mijen" label="Mijen"/><category render="true" symbol="7" value="Ngaliyan" label="Ngaliyan"/><category render="true" symbol="8" value="Pedurungan" label="Pedurungan"/><category render="true" symbol="9" value="Semarang Barat" label="Semarang Barat"/><category render="true" symbol="10" value="Semarang Selatan" label="Semarang Selatan"/><category render="true" symbol="11" value="Semarang Tengah" label="Semarang Tengah"/><category render="true" symbol="12" value="Semarang Timur" label="Semarang Timur"/><category render="true" symbol="13" value="Semarang Utara" label="Semarang Utara"/><category render="true" symbol="14" value="Tembalang" label="Tembalang"/><category render="true" symbol="15" value="Tugu" label="Tugu"/>
+        </categories>
+        <symbols>
+          <symbol type="fill" name="0" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="196,123,138,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="1" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="224,154,92,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="2" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="201,132,116,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="3" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="142,124,195,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="4" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="212,163,115,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="5" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="95,143,98,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="6" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="176,137,104,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="7" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="92,122,153,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="8" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="95,168,161,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="9" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="109,142,160,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="10" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="125,186,154,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="11" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="224,177,90,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="12" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="224,122,95,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="13" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="106,174,214,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="14" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="125,154,106,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol><symbol type="fill" name="15" alpha="0.55" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleFill" enabled="1" pass="0" locked="0">
+            <prop k="color" v="196,163,90,160"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.26"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="style" v="solid"/>
+          </layer>
+        </symbol>
+        </symbols>
+      </renderer-v2>
+    </maplayer><maplayer geometry="Line" type="vector" wkbType="MultiLineString" simplifyDrawingHints="1" labelsEnabled="0" readOnly="0" refreshOnNotifyEnabled="0" hasScaleBasedVisibilityFlag="0" autoRefreshEnabled="0" minScale="1e+08" maxScale="0" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0">
+      <extent>
+        <xmin>110.26984</xmin>
+        <ymin>-7.11529</ymin>
+        <xmax>110.50316</xmax>
+        <ymax>-6.93139</ymax>
+      </extent>
+      <id>jalan_kecil_singgah</id>
+      <datasource>data/jalan-kecil.geojson</datasource>
+      <layername>Jalan kecil</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="UTF-8">ogr</provider>
+      <encoding>UTF-8</encoding>
+      <renderer-v2 type="categorizedSymbol" attr="kecamatan" forceraster="0" symbollevels="0" enableorderby="0">
+        <categories>
+          <category render="true" symbol="0" value="Banyumanik" label="Banyumanik"/><category render="true" symbol="1" value="Candisari" label="Candisari"/><category render="true" symbol="2" value="Gajahmungkur" label="Gajahmungkur"/><category render="true" symbol="3" value="Gayamsari" label="Gayamsari"/><category render="true" symbol="4" value="Genuk" label="Genuk"/><category render="true" symbol="5" value="Gunungpati" label="Gunungpati"/><category render="true" symbol="6" value="Mijen" label="Mijen"/><category render="true" symbol="7" value="Ngaliyan" label="Ngaliyan"/><category render="true" symbol="8" value="Pedurungan" label="Pedurungan"/><category render="true" symbol="9" value="Semarang Barat" label="Semarang Barat"/><category render="true" symbol="10" value="Semarang Selatan" label="Semarang Selatan"/><category render="true" symbol="11" value="Semarang Tengah" label="Semarang Tengah"/><category render="true" symbol="12" value="Semarang Timur" label="Semarang Timur"/><category render="true" symbol="13" value="Semarang Utara" label="Semarang Utara"/><category render="true" symbol="14" value="Tembalang" label="Tembalang"/><category render="true" symbol="15" value="Tugu" label="Tugu"/>
+        </categories>
+        <symbols>
+          <symbol type="line" name="0" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="196,123,138,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="1" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="224,154,92,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="2" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="201,132,116,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="3" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="142,124,195,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="4" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="212,163,115,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="5" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="95,143,98,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="6" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="176,137,104,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="7" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="92,122,153,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="8" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="95,168,161,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="9" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="109,142,160,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="10" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="125,186,154,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="11" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="224,177,90,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="12" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="224,122,95,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="13" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="106,174,214,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="14" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="125,154,106,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="line" name="15" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="196,163,90,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.4"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol>
+        </symbols>
+      </renderer-v2>
+    </maplayer><maplayer geometry="Line" type="vector" wkbType="MultiLineString" simplifyDrawingHints="1" labelsEnabled="0" readOnly="0" refreshOnNotifyEnabled="0" hasScaleBasedVisibilityFlag="0" autoRefreshEnabled="0" minScale="1e+08" maxScale="0" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0">
+      <extent>
+        <xmin>110.26984</xmin>
+        <ymin>-7.11529</ymin>
+        <xmax>110.50316</xmax>
+        <ymax>-6.93139</ymax>
+      </extent>
+      <id>jalan_utama_singgah</id>
+      <datasource>data/jalan-utama.geojson</datasource>
+      <layername>Jalan utama</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="UTF-8">ogr</provider>
+      <encoding>UTF-8</encoding>
+      <renderer-v2 type="singleSymbol"><symbol type="line" name="0" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleLine" enabled="1" pass="0" locked="0">
+            <prop k="line_color" v="51,65,85,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.7"/>
+            <prop k="line_width_unit" v="MM"/>
+          </layer>
+        </symbol></renderer-v2>
+    </maplayer><maplayer geometry="Point" type="vector" wkbType="Point" simplifyDrawingHints="1" labelsEnabled="0" readOnly="0" refreshOnNotifyEnabled="0" hasScaleBasedVisibilityFlag="0" autoRefreshEnabled="0" minScale="1e+08" maxScale="0" simplifyDrawingTol="1" simplifyLocal="1" simplifyAlgorithm="0">
+      <extent>
+        <xmin>110.26984</xmin>
+        <ymin>-7.11529</ymin>
+        <xmax>110.50316</xmax>
+        <ymax>-6.93139</ymax>
+      </extent>
+      <id>tempat_singgah</id>
+      <datasource>data/tempat.geojson</datasource>
+      <layername>Tempat</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+          <srsid>3452</srsid>
+          <srid>4326</srid>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="UTF-8">ogr</provider>
+      <encoding>UTF-8</encoding>
+      <renderer-v2 type="categorizedSymbol" attr="group" forceraster="0" symbollevels="0" enableorderby="0">
+        <categories>
+          <category render="true" symbol="0" value="hotel" label="hotel"/><category render="true" symbol="1" value="wisata" label="wisata"/><category render="true" symbol="2" value="belanja" label="belanja"/><category render="true" symbol="3" value="transport" label="transport"/>
+        </categories>
+        <symbols>
+          <symbol type="marker" name="0" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleMarker" enabled="1" pass="0" locked="0">
+            <prop k="color" v="180,83,9,255"/>
+            <prop k="name" v="circle"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="size" v="3.2"/>
+            <prop k="size_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="marker" name="1" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleMarker" enabled="1" pass="0" locked="0">
+            <prop k="color" v="15,118,110,255"/>
+            <prop k="name" v="circle"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="size" v="3.2"/>
+            <prop k="size_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="marker" name="2" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleMarker" enabled="1" pass="0" locked="0">
+            <prop k="color" v="29,78,216,255"/>
+            <prop k="name" v="circle"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="size" v="3.2"/>
+            <prop k="size_unit" v="MM"/>
+          </layer>
+        </symbol><symbol type="marker" name="3" alpha="1" clip_to_extent="1" force_rhr="0">
+          <layer class="SimpleMarker" enabled="1" pass="0" locked="0">
+            <prop k="color" v="51,65,85,255"/>
+            <prop k="name" v="circle"/>
+            <prop k="outline_color" v="255,255,255,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0.4"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="size" v="3.2"/>
+            <prop k="size_unit" v="MM"/>
+          </layer>
+        </symbol>
+        </symbols>
+      </renderer-v2>
+    </maplayer>
+  </projectlayers>
+  <mapcanvas name="theMapCanvas" annotationsVisible="1">
+    <units>degrees</units>
+    <extent>
+      <xmin>110.26984</xmin>
+      <ymin>-7.11529</ymin>
+      <xmax>110.50316</xmax>
+      <ymax>-6.93139</ymax>
+    </extent>
+    <destinationsrs>
+      <spatialrefsys>
+        <authid>EPSG:4326</authid>
+        <srid>4326</srid>
+      </spatialrefsys>
+    </destinationsrs>
+  </mapcanvas>
+  <properties>
+    <SpatialRefSys>
+      <ProjectionsEnabled type="int">1</ProjectionsEnabled>
+    </SpatialRefSys>
+    <Gui>
+      <CanvasColorBluePart type="int">230</CanvasColorBluePart>
+      <CanvasColorGreenPart type="int">238</CanvasColorGreenPart>
+      <CanvasColorRedPart type="int">244</CanvasColorRedPart>
+    </Gui>
+  </properties>
+</qgis>
