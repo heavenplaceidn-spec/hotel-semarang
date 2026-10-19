@@ -86,7 +86,8 @@
     .filters select, .list button { border: 0; border-radius: 12px; background: #f4f7f8; }
     .filters select { min-height: 40px; padding: 0 8px; }
     .list { list-style: none; margin: 8px 0 0; padding: 0; }
-    .list button { display: flex; width: 100%; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; margin-bottom: 6px; text-align: left; }
+    .list button { display: flex; width: 100%; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; margin-bottom: 6px; text-align: left; transition: background .15s ease; }
+    .list button:hover, .list button.is-on { background: #e7f4f6; }
     .list button strong { font-size: 14px; }
     .list button span { color: var(--muted); font-size: 12px; }
     .disclaimer { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
@@ -187,7 +188,12 @@
     #loader.hide { opacity: 0; pointer-events: none; }
     .spin { width: 36px; height: 36px; margin: 0 auto 10px; border: 3px solid #d5e0e6; border-top-color: var(--ocean); border-radius: 50%; animation: spin .8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .leaflet-bottom.leaflet-left { bottom: 16px; left: 50%; transform: translateX(-50%); }
+    .leaflet-bottom.leaflet-left { bottom: 52px; left: 14px; }
+    .leaflet-interactive { cursor: pointer; }
+    .tip { padding: 4px 2px; font-size: 12px; line-height: 1.35; }
+    .tip strong, .tip span { display: block; }
+    .tip span { font-weight: 600; opacity: .8; }
+    body[data-place="on"] .leaflet-bottom.leaflet-left { opacity: 0; }
     .cluster { background: transparent; }
     .cluster span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; color: white; font-weight: 800; border: 2px solid white; box-shadow: var(--shadow); }
     .cluster.hotel span { background: var(--terra); }
@@ -197,7 +203,9 @@
     #map.is-tool, #map.is-tool .leaflet-interactive { cursor: crosshair; }
     .sheet-tabs { display: none; }
     @media (max-width: 1100px) { .brand-sub { display: none !important; } .base-card { width: 60px; height: 52px; } .base-toggle { height: 52px; } }
-    @media (max-width: 860px) { .panel { width: min(300px, calc(100vw - 28px)); } }
+    @media (max-width: 860px) {
+      body[data-panel="open"] .panel { width: min(320px, calc(100vw - 24px)); }
+    }
     @media (max-width: 768px) {
       .rail { top: 8px; left: 8px; right: 8px; width: auto; }
       .panel, .legend { top: auto; left: 8px; right: 8px; bottom: calc(56px + var(--safe)); width: auto; max-height: min(52dvh, 460px); border-radius: 16px 16px 0 0; }
@@ -215,9 +223,29 @@
       body[data-panel="open"] .status, body[data-panel="open"] .tools, body[data-panel="open"] .chips,
       body[data-place="on"] .status, body[data-place="on"] .base-dock, body[data-place="on"] .route-clear { display: none; }
       .base-dock { right: 8px; bottom: calc(56px + var(--safe)); }
-      .leaflet-bottom.leaflet-left, .measure { display: none; }
+      .leaflet-bottom.leaflet-left { display: none; }
+      body[data-tool="on"] .measure { display: block; left: 8px; right: 8px; bottom: calc(108px + var(--safe)); max-width: none; }
       .route-clear { right: 8px; bottom: calc(112px + var(--safe)); }
       #toast { top: auto; bottom: calc(120px + var(--safe)); }
+    }
+    @media (max-width: 420px) {
+      .brand h1 { font-size: 16px; }
+      .menu-back, .tools-toggle { height: 32px; padding: 0 8px; }
+      .place-tools button { padding: 0 8px; font-size: 11px; }
+      .home-logo { font-size: 17px; }
+      .home-panel { width: calc(100% - 20px); padding: 12px; }
+      .home-panel h1 { font-size: 24px; }
+      .banner { height: 108px; }
+      .place-body h2 { font-size: 18px; }
+      .home-card img { height: 168px; }
+    }
+    @media (max-height: 480px) and (max-width: 900px) {
+      .home-hero > img { height: 200px; }
+      .home-card img { height: 120px; }
+      .home-block { margin: 16px auto; }
+    }
+    @media (pointer: coarse) {
+      .chips button, .menu-back, .tools button { min-height: 40px; }
     }
     @media (max-height: 480px) {
       .status, .brand-sub { display: none !important; }
@@ -236,6 +264,7 @@
     body[data-theme="dark"] #results button.is-on, body[data-theme="dark"] #results button:hover { background: #16343c; color: #b7e4ef; }
     body[data-theme="dark"] .tools-toggle.is-on, body[data-theme="dark"] .chips button.is-on { background: var(--ocean); color: #062028; }
     body[data-theme="dark"] .tools button, body[data-theme="dark"] .filters select, body[data-theme="dark"] .list button, body[data-theme="dark"] .btn.ghost, body[data-theme="dark"] .dl-grid button, body[data-theme="dark"] .dl-grid a { background: #1a2832; color: var(--ink); }
+    body[data-theme="dark"] .list button:hover, body[data-theme="dark"] .list button.is-on { background: #16343c; }
     body[data-theme="dark"] .place-tab span, body[data-theme="dark"] .place-tab button, body[data-theme="dark"] .base-toggle, body[data-theme="dark"] .sheet-tabs { background: #121c24; color: var(--ink); }
     body[data-theme="dark"] .base-card { border-color: #121c24; }
     body[data-theme="dark"] .badge.on { background: #064e3b; color: #a7f3d0; }
@@ -285,7 +314,8 @@
     .bubbles i.off { background: #d5d5d5; }
     .bubbles b { font-weight: 700; color: #1a1a1a; }
     @media (max-width: 720px) {
-      .home-bar { padding: 0 14px; }
+      .home-bar { height: auto; min-height: 56px; padding: 8px 14px; flex-wrap: wrap; }
+      .home-logo { font-size: 18px; }
       .home-nav { display: none; }
       .home-hero { min-height: 0; height: auto; }
       .home-hero > img { height: 360px; }
@@ -831,6 +861,22 @@
         routing = false;
         if (selected) renderCard(selected);
       }
+      function tipHtml(place) {
+        return "<strong>" + esc(place.name) + "</strong><span>" + esc(place.kind || place.group) + " · " + esc(place.kelurahan || place.kecamatan || "") + "</span>";
+      }
+      function bindPoint(marker, place, quiet, hot) {
+        marker.bindTooltip(tipHtml(place), { direction: "top", sticky: true, className: "tip", opacity: 1 });
+        marker.on("mouseover", () => { if (!selected || selected.id !== place.id) marker.setStyle({ radius: hot, weight: 2.4 }); });
+        marker.on("mouseout", () => {
+          const on = selected && selected.id === place.id;
+          marker.setStyle({ radius: on ? hot : quiet, weight: on ? 3 : 1.4 });
+        });
+        marker.on("click", (event) => {
+          if (state.tool) return;
+          L.DomEvent.stopPropagation(event);
+          focusPlace(place, false);
+        });
+      }
       function drawPlaces() {
         if (placeLayer) placeLayer.remove();
         placeLayer = L.layerGroup();
@@ -843,12 +889,7 @@
               color: "#fff", weight: selected && selected.id === p.id ? 3 : 1.4,
               fillColor: COLORS[p.group] || "#334155", fillOpacity: 1, pane: "pointPane"
             });
-            marker.bindTooltip(p.name, { direction: "top", sticky: true, className: "tip" });
-            marker.on("click", (event) => {
-              if (state.tool) return;
-              L.DomEvent.stopPropagation(event);
-              focusPlace(p, false);
-            });
+            bindPoint(marker, p, 5.5, 8);
             marker.addTo(placeLayer);
           });
         } else {
@@ -863,8 +904,7 @@
             if (group.length === 1) {
               const p = group[0];
               const marker = L.circleMarker([p.lat, p.lon], { radius: 6, color: "#fff", weight: 1.4, fillColor: COLORS[p.group], fillOpacity: 1, pane: "pointPane" });
-              marker.bindTooltip(p.name, { direction: "top", className: "tip" });
-              marker.on("click", () => focusPlace(p, true));
+              bindPoint(marker, p, 6, 9);
               marker.addTo(placeLayer);
               return;
             }
@@ -875,6 +915,7 @@
             const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
             const size = group.length > 30 ? 46 : group.length > 12 ? 40 : 34;
             const marker = L.marker([lat, lon], { icon: L.divIcon({ className: "cluster " + top, html: "<span>" + group.length + "</span>", iconSize: [size, size] }) });
+            marker.bindTooltip(group.length + " tempat · klik untuk mendekat", { direction: "top", className: "tip" });
             marker.on("click", () => {
               const bounds = L.latLngBounds(group.map((p) => [p.lat, p.lon]));
               if (bounds.getNorthEast().distanceTo(bounds.getSouthWest()) < 40) map.flyTo(bounds.getCenter(), 16, { duration: motion() ? 0.45 : 0 });
@@ -899,6 +940,7 @@
           const li = document.createElement("li");
           const btn = document.createElement("button");
           btn.type = "button";
+          btn.classList.toggle("is-on", !!(selected && selected.id === p.id));
           const dist = userLL ? " · " + formatKm(hav(userLL, L.latLng(p.lat, p.lon))) : "";
           btn.innerHTML = "<strong>" + esc(p.name) + "</strong><span>" + esc(p.kind || p.group) + " · " + esc(p.kecamatan) + dist + "</span>";
           btn.addEventListener("click", () => focusPlace(p, true));
@@ -948,6 +990,7 @@
       function setTool(next) {
         const off = state.tool === next;
         state.tool = off ? null : next;
+        document.body.dataset.tool = state.tool ? "on" : "off";
         measurePts = []; measureLocked = false; measureLayer.clearLayers();
         document.getElementById("map").classList.toggle("is-tool", !!state.tool);
         document.querySelectorAll(".tools button").forEach((btn) => btn.classList.toggle("is-on", btn.dataset.tool === state.tool));
@@ -1539,6 +1582,7 @@
         document.getElementById("home-cards").scrollIntoView({ behavior: "smooth", block: "start" });
       }));
       on(document.getElementById("home-form"), "submit", (event) => { event.preventDefault(); openGate(); });
+      on(document.getElementById("home-logo"), "click", () => document.getElementById("home").scrollTo({ top: 0, behavior: "smooth" }));
       on(document.getElementById("home-back"), "click", showHome);
       document.querySelectorAll(".home-mosaic button").forEach((btn) => on(btn, "click", () => openGate({ group: btn.dataset.open })));
 
@@ -1581,6 +1625,10 @@
             pane: "kelPane", style: kelStyle, interactive: true,
             onEachFeature: (feature, layer) => {
               layer.bindTooltip(feature.properties.name + " · " + feature.properties.kecamatan, { sticky: true, className: "tip" });
+              layer.on("mouseover", () => {
+                if (state.kel !== feature.properties.name) layer.setStyle({ weight: 2.2, color: "#0b3a4a" });
+              });
+              layer.on("mouseout", () => layer.setStyle(kelStyle(feature)));
               layer.on("click", (event) => {
                 if (state.tool) return;
                 L.DomEvent.stopPropagation(event);
