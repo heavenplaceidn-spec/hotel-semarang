@@ -283,7 +283,7 @@
 <body>
   <div id="home">
     <header class="home-bar">
-      <button type="button" class="home-logo" id="home-logo"><img src="home/mark.jpg" alt="" /><span>singgah</span></button>
+      <button type="button" class="home-logo" id="home-logo"><img src="home/mark.jpg?v=2" alt="" /><span>singgah</span></button>
       <nav class="home-nav" aria-label="Kategori">
         <button type="button" data-jump="hotel">Hotel</button>
         <button type="button" data-jump="wisata">Wisata</button>
@@ -291,7 +291,7 @@
       </nav>
     </header>
     <section class="home-hero">
-      <img src="home/hero.jpg" alt="Kota lama Semarang" />
+      <img src="home/hero.jpg?v=2" alt="Kota lama Semarang" />
       <div class="home-panel">
         <h1>Ke mana di Semarang?</h1>
         <div class="home-tabs" role="tablist" aria-label="Jenis tempat">
@@ -313,10 +313,10 @@
     <section class="home-block">
       <h2>Lihat lewat foto</h2>
       <div class="home-mosaic">
-        <button type="button" data-open="hotel"><img src="home/tentrem.jpg" alt="" /><span>Hotel</span></button>
-        <button type="button" data-open="wisata"><img src="home/lawang.jpg" alt="" /><span>Wisata</span></button>
-        <button type="button" data-open="belanja"><img src="home/simpang.jpg" alt="" /><span>Belanja</span></button>
-        <button type="button" data-open="wisata"><img src="home/kreo.jpg" alt="" /><span>Alam</span></button>
+        <button type="button" data-open="hotel"><img src="home/tentrem.jpg?v=2" alt="" /><span>Hotel</span></button>
+        <button type="button" data-open="wisata"><img src="home/lawang.jpg?v=2" alt="" /><span>Wisata</span></button>
+        <button type="button" data-open="belanja"><img src="home/simpang.jpg?v=2" alt="" /><span>Belanja</span></button>
+        <button type="button" data-open="wisata"><img src="home/kreo.jpg?v=2" alt="" /><span>Alam</span></button>
       </div>
     </section>
   </div>
@@ -1347,19 +1347,19 @@
       }
 
       const HOME_PICKS = [
-        { name: "Hotel Tentrem Semarang", group: "hotel", where: "Semarang Tengah", note: "Hotel bintang 5", score: "5,0", dots: 5, photo: "home/tentrem.jpg" },
-        { name: "Lawang Sewu", group: "wisata", where: "Semarang Tengah", note: "Museum", score: "4,8", dots: 5, photo: "home/lawang.jpg" },
-        { name: "Kelenteng Sam Poo Kong", group: "wisata", where: "Semarang Barat", note: "Wisata", score: "4,7", dots: 5, photo: "home/wisata.jpg" },
-        { name: "Goa Kreo", group: "wisata", where: "Gunungpati", note: "Wisata alam", score: "4,5", dots: 4, photo: "home/kreo.jpg" },
-        { name: "Gereja Blenduk", group: "wisata", where: "Semarang Tengah", note: "Cagar budaya", score: "4,6", dots: 5, photo: "home/blenduk.jpg" },
-        { name: "Plaza Simpang Lima", group: "belanja", where: "Semarang Tengah", note: "Mal", score: "4,4", dots: 4, photo: "home/simpang.jpg" },
-        { name: "Pollux Mall Paragon Semarang", group: "belanja", where: "Semarang Tengah", note: "Mal", score: "4,6", dots: 5, photo: "home/belanja.jpg" },
-        { name: "Gumaya Tower Hotel", group: "hotel", where: "Semarang Tengah", note: "Hotel bintang 5", score: "5,0", dots: 5, photo: "home/gumaya.jpg" }
+        { name: "Hotel Tentrem Semarang", group: "hotel", where: "Semarang Tengah", note: "Hotel bintang 5", score: "5,0", dots: 5, photo: "home/tentrem.jpg?v=2" },
+        { name: "Lawang Sewu", group: "wisata", where: "Semarang Tengah", note: "Museum", score: "4,8", dots: 5, photo: "home/lawang.jpg?v=2" },
+        { name: "Kelenteng Sam Poo Kong", group: "wisata", where: "Semarang Barat", note: "Wisata", score: "4,7", dots: 5, photo: "home/wisata.jpg?v=2" },
+        { name: "Goa Kreo", group: "wisata", where: "Gunungpati", note: "Wisata alam", score: "4,5", dots: 4, photo: "home/kreo.jpg?v=2" },
+        { name: "Gereja Blenduk", group: "wisata", where: "Semarang Tengah", note: "Cagar budaya", score: "4,6", dots: 5, photo: "home/blenduk.jpg?v=2" },
+        { name: "Plaza Simpang Lima", group: "belanja", where: "Semarang Tengah", note: "Mal", score: "4,4", dots: 4, photo: "home/simpang.jpg?v=2" },
+        { name: "Pollux Mall Paragon Semarang", group: "belanja", where: "Semarang Tengah", note: "Mal", score: "4,6", dots: 5, photo: "home/belanja.jpg?v=2" },
+        { name: "Gumaya Tower Hotel", group: "hotel", where: "Semarang Tengah", note: "Hotel bintang 5", score: "5,0", dots: 5, photo: "home/gumaya.jpg?v=2" }
       ];
-      const GROUP_PHOTO = { hotel: "home/hotel.jpg", wisata: "home/wisata.jpg", belanja: "home/belanja.jpg", transport: "home/pantai.jpg" };
+      const GROUP_PHOTO = { hotel: "home/hotel.jpg?v=2", wisata: "home/wisata.jpg?v=2", belanja: "home/belanja.jpg?v=2", transport: "home/pantai.jpg?v=2" };
       function photoFor(name, group) {
         const pick = HOME_PICKS.find((item) => item.name === name);
-        return pick ? pick.photo : (GROUP_PHOTO[group] || "home/hero.jpg");
+        return pick ? pick.photo : (GROUP_PHOTO[group] || "home/hero.jpg?v=2");
       }
       let homeCat = "semua";
       let pendingOpen = null;
